@@ -24,6 +24,10 @@ lists, or any mix of them.
   on their own. Combined adds each list's main and sideboard copies first,
   then takes the max across lists, so it is the count needed to build any one
   full 40+10 list. The choice is remembered in the browser.
+- Click any card row to open a breakdown: how many lists ran it at 1, 2 or
+  3 copies (or not at all), and every placing that ran it grouped by copy
+  count, each linked to its list. Works in both sideboard views and on the
+  battlefield tables.
 - Links under "Top 4 elsewhere" are the top-4 finishes from the smaller
   events, labelled event and place. Hover one for the date and field size.
 - Placings that never posted a list are named under "placed but no list on
