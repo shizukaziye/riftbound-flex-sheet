@@ -89,17 +89,13 @@ tr.card:hover td,tr.card:focus-visible td{background:var(--bg)}
 tr.card:focus-visible{outline:none}
 tr.card[aria-expanded="true"] td{background:var(--hi)}
 tr.card[aria-expanded="true"] td.name{color:var(--hi-ink)}
-tr.detail td{background:var(--bg);border-top:0;padding:8px 10px 10px 36px;font-size:12.5px;color:var(--ink2)}
+tr.detail td{background:var(--bg);border-top:0;padding:6px 10px 8px 36px}
 tr.detail+tr.grp td{border-top-width:2px}
-.dist{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:7px;align-items:center}
-.dist .dlab{font-family:"Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.08em;font-size:12px;color:var(--ink3);margin-right:2px}
-.dchip{font-family:"JetBrains Mono",monospace;font-size:11.5px;padding:2px 7px;border:1px solid var(--line);border-radius:3px;background:var(--panel);color:var(--ink2)}
-.dchip b{color:var(--accent);font-weight:500}
-.dchip.zero{opacity:.65}
-.uses{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline}
-.uses .ulab{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--accent);margin-left:6px}
-.uses .ulab:first-child{margin-left:0}
-.uses a{font-family:"JetBrains Mono",monospace;font-size:12px;text-decoration:none;border-bottom:1px solid var(--line);white-space:nowrap;color:var(--ink)}
+.split{display:grid;grid-template-columns:auto auto auto auto;gap:2px 18px;width:max-content;font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--ink2)}
+.split span{text-align:right}
+.split .h{font-family:"Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.08em;font-size:11.5px;color:var(--ink3);padding-bottom:2px}
+.split .q{text-align:left;color:var(--accent)}
+.split .z{opacity:.6}
 body[data-view="combined"] .v-sep{display:none}
 body[data-view="separate"] .v-comb{display:none}
 </style>
@@ -114,7 +110,7 @@ body[data-view="separate"] .v-comb{display:none}
 <div class="how">
   <p><b>Reading the tables.</b> The number is the max copies seen (a 1-of in one list, 0 in another, 2 in a third → shows as <b>2</b>). The bar is how many of that legend's lists ran the card at all. Rows tagged <i>core</i> were in every list. Champion cards are included in the main count so an extra main-deck copy shows up.</p>
   <p><b>Separate</b> tallies main deck and sideboard on their own (a card can be a 1-of main in one list and a 2-of side in another). <b>Combined</b> adds each list's main and sideboard copies together first, then takes the max — that's the number you need to own to build any one full list. Battlefields and runes are max-per-item too (runes will sum past 12; that's the range covering both splits).</p>
-  <p><b>Click any row</b> to see how many lists ran it at 1, 2 or 3 copies (or not at all) and which placings did, each linked to its list.</p>
+  <p><b>Click any row</b> for the copy split: how many lists ran it at 3, 2 or 1 copies or not at all, their share, and the average placing of each group.</p>
 </div>
 <div class="ctl" role="group" aria-label="Sideboard handling">
   <span class="lab">Sideboard</span>
@@ -159,11 +155,13 @@ function detail(d, kind, card){
   const byQ = new Map();
   for(const r of u){ if(!byQ.has(r.q)) byQ.set(r.q, []); byQ.get(r.q).push(r.x); }
   const qs = [...byQ.keys()].sort((a,b)=>b-a);
-  const unit = kind==='side' ? 'side' : 'list';
-  const chips = qs.map(q=>{ const k=byQ.get(q).length; return `<span class="dchip${q?'':' zero'}"><b>${q ? q+'×' : 'none'}</b> ${k} ${unit}${k>1?'s':''} · ${(100*k/total).toFixed(0)}%</span>`; }).join('');
-  const uses = qs.filter(q=>q>0).map(q=>`<span class="ulab">${q}×</span>`+byQ.get(q).map(x=>`<a href="${x.url}" target="_blank" rel="noopener"${title(x)}>${esc(lab(x))}</a>`).join('')).join('');
-  const lead = kind==='comb' ? 'main + side per list' : kind==='side' ? `of ${total} sideboards` : `of ${total} lists`;
-  return `<tr class="detail"><td colspan="4"><div class="dist"><span class="dlab">${lead}</span>${chips}</div><div class="uses">${uses}</div></td></tr>`;
+  const unit = kind==='side' ? 'sides' : 'lists';
+  const rows = qs.map(q=>{
+    const g = byQ.get(q), avg = g.reduce((a,x)=>a+x.rank,0)/g.length;
+    const z = q ? '' : ' z';
+    return `<span class="q${z}">${q ? q+'×' : 'none'}</span><span class="${z.trim()}">${g.length}</span><span class="${z.trim()}">${(100*g.length/total).toFixed(0)}%</span><span class="${z.trim()}">${avg.toFixed(1)}</span>`;
+  }).join('');
+  return `<tr class="detail"><td colspan="4"><div class="split"><span class="h q">copies</span><span class="h">${unit}</span><span class="h">share</span><span class="h">avg place</span>${rows}</div></td></tr>`;
 }
 function toggle(tr){
   const open = tr.getAttribute('aria-expanded')==='true';
