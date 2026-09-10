@@ -9,7 +9,7 @@
 <meta property="og:title" content="Riftbound Flex Sheet">
 <meta property="og:description" content="Flex cards and an editable generic 40/10/3 decklist per legend from every 100+ player Riftbound event in the last month, cut scaled to field size, with flex slots marked and filters by event size and placing.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231F6F86'/%3E%3Crect x='7' y='5' width='13' height='18' rx='2' fill='%23ffffff' opacity='.55'/%3E%3Crect x='12' y='9' width='13' height='18' rx='2' fill='%23ffffff'/%3E%3Ctext x='18.5' y='22' font-family='Arial' font-weight='700' font-size='11' fill='%231F6F86' text-anchor='middle'%3E2%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;600&family=Roboto+Mono:wght@500&display=swap">
 <style>
 :root{
   --bg:#EEF1F5; --panel:#FFFFFF; --ink:#16212E; --ink2:#4A5866; --ink3:#7C8794; --line:#D6DCE4; --line2:#E7EBF0;
@@ -34,7 +34,7 @@ a{color:var(--accent)}
 header.top{display:flex;flex-wrap:wrap;gap:12px 32px;align-items:flex-end;border-bottom:2px solid var(--ink);padding-bottom:16px;margin-bottom:8px}
 h1{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;font-size:44px;line-height:1;margin:0;letter-spacing:.01em;text-wrap:balance}
 .sub{color:var(--ink2);max-width:62ch;margin:0}
-.meta{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12px;color:var(--ink3);letter-spacing:.02em}
+.meta{font-family:"Roboto Mono",ui-monospace,monospace;font-size:12px;color:var(--ink3);letter-spacing:.02em}
 .how{background:var(--panel);border:1px solid var(--line);padding:14px 18px;margin:26px 0 0;max-width:78ch;scroll-margin-top:calc(var(--loseii-nav-offset,0px) + 16px)}
 .how h3{display:block}
 .how p{margin:0 0 6px}.how p:last-child{margin:0}
@@ -44,14 +44,14 @@ h1{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;font
 nav{position:sticky;top:calc(var(--loseii-nav-offset,0px) + 16px);display:flex;flex-direction:column;gap:2px}
 nav a{display:flex;justify-content:space-between;align-items:baseline;gap:6px;text-decoration:none;color:var(--ink);padding:6px 9px;border-left:3px solid transparent;font-family:"Barlow Condensed",sans-serif;font-size:18px;font-weight:600}
 nav a:hover,nav a:focus-visible{border-left-color:var(--accent);background:var(--panel);outline:none}
-nav a small{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink3)}
+nav a small{font-family:"Roboto Mono",monospace;font-size:11px;color:var(--ink3)}
 nav a.empty{opacity:.45}
 .legend{background:var(--panel);border:1px solid var(--line);margin-bottom:26px;scroll-margin-top:calc(var(--loseii-nav-offset,0px) + 16px)}
 .lhead{padding:16px 20px 12px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px 20px;align-items:baseline}
 .lhead h2{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:32px;margin:0;line-height:1}
-.lhead .cnt{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--ink2)}
+.lhead .cnt{font-family:"Roboto Mono",monospace;font-size:12px;color:var(--ink2)}
 .chips{display:flex;flex-wrap:wrap;gap:6px;padding:10px 20px 0}
-.chip{font-family:"JetBrains Mono",monospace;font-size:11.5px;padding:3px 8px;border:1px solid var(--line);border-radius:3px;color:var(--ink2);background:var(--bg)}
+.chip{font-family:"Roboto Mono",monospace;font-size:11.5px;padding:3px 8px;border:1px solid var(--line);border-radius:3px;color:var(--ink2);background:var(--bg)}
 .chip b{color:var(--ink);font-weight:500}
 .chip.rune{border-left:4px solid var(--rc)}
 .chip.dom{border-left:4px solid var(--rc)}
@@ -59,23 +59,23 @@ nav a.empty{opacity:.45}
 @media (max-width:760px){.layout{grid-template-columns:1fr}nav{position:static;flex-direction:row;flex-wrap:wrap;gap:2px 4px}nav a{font-size:15px;padding:3px 7px;border-left-width:2px}nav a small{font-size:10px}.cols,.bcols,.fcols{grid-template-columns:1fr}h1{font-size:36px}.lhead h2{font-size:26px}}
 @media (max-width:1000px){.fcols{grid-template-columns:1fr}}
 h3{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);margin:8px 0 6px;display:flex;justify-content:space-between;align-items:baseline}
-h3 span{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:0;text-transform:none;color:var(--ink3);font-weight:500}
+h3 span{font-family:"Roboto Mono",monospace;font-size:11px;letter-spacing:0;text-transform:none;color:var(--ink3);font-weight:500}
 h4{font-family:"Barlow Condensed",sans-serif;font-size:13.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin:12px 0 2px}
 table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
 td{padding:4px 6px;border-top:1px solid var(--line2);vertical-align:middle}
 tr.grp td{border-top:2px solid var(--line);padding-top:8px}
-td.n{width:30px;font-family:"JetBrains Mono",monospace;font-weight:500;font-size:14px;text-align:right;padding-right:10px}
+td.n{width:30px;font-family:"Roboto Mono",monospace;font-weight:500;font-size:14px;text-align:right;padding-right:10px}
 td.n.v3{color:var(--ink)} td.n.v2{color:var(--ink)} td.n.v1{color:var(--ink2)}
 td.name{padding-left:0}
 td.name.champ{font-weight:600}
 td.pop{width:112px;padding-right:0}
 .bar{position:relative;height:10px;background:var(--bar);border-radius:2px;overflow:hidden}
 .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--bar-full)}
-td.pct{width:52px;font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink3);text-align:right}
-tr.core td.name::after{content:"core";font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.06em;color:var(--accent);margin-left:8px;vertical-align:middle}
+td.pct{width:52px;font-family:"Roboto Mono",monospace;font-size:11px;color:var(--ink3);text-align:right}
+tr.core td.name::after{content:"core";font-family:"Roboto Mono",monospace;font-size:9.5px;letter-spacing:.06em;color:var(--accent);margin-left:8px;vertical-align:middle}
 .side{opacity:.92}
 .decks{padding:10px 20px 14px;border-top:1px solid var(--line);font-size:13px;color:var(--ink2);display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline}
-.decks a{font-family:"JetBrains Mono",monospace;font-size:12px;text-decoration:none;border-bottom:1px solid var(--line);white-space:nowrap}
+.decks a{font-family:"Roboto Mono",monospace;font-size:12px;text-decoration:none;border-bottom:1px solid var(--line);white-space:nowrap}
 .decks .lab,.lab{font-family:"Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.08em;font-size:13px;color:var(--ink3);margin-right:4px}
 .miss{padding:0 20px 14px;font-size:13px;color:var(--ink3)}
 .miss b{color:var(--ink2);font-weight:600}
@@ -104,7 +104,7 @@ body:not([data-mode="cards"]) .v-cards{display:none}
 .filters{display:flex;flex-direction:column;gap:8px;padding:12px 20px 4px}
 .frow{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center}
 .frow .lab{min-width:58px}
-.fchip{appearance:none;border:1px solid var(--line);background:var(--bg);color:var(--ink2);font-family:"JetBrains Mono",monospace;font-size:11.5px;padding:3px 8px;border-radius:3px;cursor:pointer;border-left-width:3px}
+.fchip{appearance:none;border:1px solid var(--line);background:var(--bg);color:var(--ink2);font-family:"Roboto Mono",monospace;font-size:11.5px;padding:3px 8px;border-radius:3px;cursor:pointer;border-left-width:3px}
 .fchip:hover{border-color:var(--accent)}
 .fchip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .fchip.dom[aria-pressed="true"]{background:var(--rc);border-color:var(--rc);color:#fff}
@@ -112,7 +112,7 @@ body:not([data-mode="cards"]) .v-cards{display:none}
 .frow input{font:inherit;font-size:13px;padding:4px 8px;border:1px solid var(--line);border-radius:3px;background:var(--bg);color:var(--ink);min-width:220px}
 .frow input:focus{outline:2px solid var(--accent);outline-offset:-1px}
 .frow .clear{appearance:none;border:0;background:transparent;color:var(--accent);font:inherit;font-size:12.5px;cursor:pointer;text-decoration:underline;padding:0 4px}
-.cardsum{padding:6px 20px 8px;font-family:"JetBrains Mono",monospace;font-size:12.5px;color:var(--ink2)}
+.cardsum{padding:6px 20px 8px;font-family:"Roboto Mono",monospace;font-size:12.5px;color:var(--ink2)}
 .cardsum b{color:var(--ink);font-weight:500}
 .cardswrap{overflow-x:auto;padding:0 20px 16px}
 table.cards th{font-family:"Barlow Condensed",sans-serif;font-size:12.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);text-align:left;padding:6px 6px;border-bottom:2px solid var(--line);white-space:nowrap;cursor:pointer;user-select:none}
@@ -121,11 +121,11 @@ table.cards td{white-space:nowrap}
 table.cards td.name{font-weight:600;white-space:normal;min-width:170px}
 table.cards td.name small{display:block;font-weight:400;color:var(--ink3);font-size:11px}
 table.cards td.name small i{font-style:normal;display:inline-block;width:7px;height:7px;border-radius:2px;margin-right:4px;vertical-align:middle;background:var(--rc)}
-table.cards td.m{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--ink2)}
-table.cards td.r{text-align:right;font-family:"JetBrains Mono",monospace;font-size:12px}
+table.cards td.m{font-family:"Roboto Mono",monospace;font-size:11.5px;color:var(--ink2)}
+table.cards td.r{text-align:right;font-family:"Roboto Mono",monospace;font-size:12px}
 table.cards td.rate{width:190px}
 table.cards td.rate .bar{display:inline-block;width:110px;vertical-align:middle;margin-right:8px}
-table.cards td.rate span{font-family:"JetBrains Mono",monospace;font-size:12px}
+table.cards td.rate span{font-family:"Roboto Mono",monospace;font-size:12px}
 table.cards tr.np td{color:var(--ink3)} table.cards tr.np td.name{color:var(--ink3);font-weight:400}
 table.cards td.legs{font-size:12px;color:var(--ink2);white-space:normal;min-width:160px}
 table.cards td.legs b{font-weight:600;color:var(--ink)}
@@ -136,12 +136,12 @@ table.cards td.legs b{font-weight:600;color:var(--ink)}
 .tile[aria-pressed="false"]{opacity:.55}
 .tile[aria-pressed="false"] .tot{text-decoration:line-through;color:var(--ink3)}
 .tile h4{font-family:"Barlow Condensed",sans-serif;font-size:19px;font-weight:700;margin:0;line-height:1.05;letter-spacing:0;text-transform:none;color:var(--ink)}
-.tile .tot{font-family:"JetBrains Mono",monospace;font-size:15px;font-weight:500;margin-top:3px}
+.tile .tot{font-family:"Roboto Mono",monospace;font-size:15px;font-weight:500;margin-top:3px}
 .tile .sm{font-size:11px;color:var(--ink3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tile.all{border-left-color:var(--ink);opacity:1}
 .buyctl{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;padding:8px 20px 12px;font-size:13px;color:var(--ink2)}
 .buyctl .seg button{font-size:15px;padding:4px 10px}
-.buyctl .sum{margin-left:auto;font-family:"JetBrains Mono",monospace;font-size:12.5px;color:var(--ink2)}
+.buyctl .sum{margin-left:auto;font-family:"Roboto Mono",monospace;font-size:12.5px;color:var(--ink2)}
 .buyctl .sum b{color:var(--ink);font-weight:500}
 .buywrap{overflow-x:auto;padding:0 20px 16px}
 table.buy th{background:var(--panel);font-family:"Barlow Condensed",sans-serif;font-size:12.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);text-align:left;padding:6px 6px;border-bottom:2px solid var(--line);white-space:nowrap;cursor:pointer;user-select:none}
@@ -150,15 +150,15 @@ table.buy th[aria-sort]{color:var(--accent)}
 table.buy td{white-space:nowrap}
 table.buy td.name{font-weight:600;white-space:normal;min-width:150px}
 table.buy td.name small{display:block;font-weight:400;color:var(--ink3);font-size:11px}
-table.buy td.d{text-align:center;color:var(--ink3);font-family:"JetBrains Mono",monospace;font-size:12px}
+table.buy td.d{text-align:center;color:var(--ink3);font-family:"Roboto Mono",monospace;font-size:12px}
 table.buy td.d b{color:var(--ink);font-weight:500}
 table.buy td.d i{font-style:normal;color:var(--hi-ink);background:var(--hi);border-radius:2px;padding:0 4px}
-table.buy td.need{font-family:"JetBrains Mono",monospace;font-size:14px;font-weight:500;text-align:right}
-table.buy td.money{font-family:"JetBrains Mono",monospace;font-size:12.5px;text-align:right}
+table.buy td.need{font-family:"Roboto Mono",monospace;font-size:14px;font-weight:500;text-align:right}
+table.buy td.money{font-family:"Roboto Mono",monospace;font-size:12.5px;text-align:right}
 table.buy td.money.unit{color:var(--ink);font-weight:500}
 table.buy td.money.tot{font-weight:500;color:var(--ink)}
 table.buy td.print{color:var(--ink2);font-size:12.5px}
-table.buy td.print span{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink3)}
+table.buy td.print span{font-family:"Roboto Mono",monospace;font-size:11px;color:var(--ink3)}
 table.buy tr.done td{opacity:.45;text-decoration:line-through}
 table.buy tr.done td.chk{opacity:1;text-decoration:none}
 table.buy td.chk{width:30px;padding-right:0}
@@ -172,7 +172,7 @@ tr.card[aria-expanded="true"] td{background:var(--hi)}
 tr.card[aria-expanded="true"] td.name{color:var(--hi-ink)}
 tr.detail td{background:var(--bg);border-top:0;padding:6px 10px 8px 36px}
 tr.detail+tr.grp td{border-top-width:2px}
-.split{display:grid;grid-template-columns:auto auto auto auto;gap:2px 18px;width:max-content;font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--ink2)}
+.split{display:grid;grid-template-columns:auto auto auto auto;gap:2px 18px;width:max-content;font-family:"Roboto Mono",monospace;font-size:12px;color:var(--ink2)}
 .split span{text-align:right}
 .split .h{font-family:"Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.08em;font-size:11.5px;color:var(--ink3);padding-bottom:2px}
 .split .q{text-align:left;color:var(--accent)}
@@ -181,47 +181,47 @@ tr.detail+tr.grp td{border-top-width:2px}
 .bcols{display:grid;grid-template-columns:1.25fr 1fr;gap:0 24px;padding:6px 20px 18px}
 .bcols table{margin-bottom:4px}
 td.rates{width:92px;text-align:right;white-space:nowrap;padding-right:0}
-td.rates b{display:inline-block;width:27px;font-family:"JetBrains Mono",monospace;font-weight:500;font-size:10.5px;text-align:center;border-radius:2px;padding:1px 0;margin-left:2px;line-height:1.5}
+td.rates b{display:inline-block;width:27px;font-family:"Roboto Mono",monospace;font-weight:500;font-size:10.5px;text-align:center;border-radius:2px;padding:1px 0;margin-left:2px;line-height:1.5}
 td.rates b.hi{background:var(--bar-full);color:var(--accent-ink)}
 td.rates b.mid{background:var(--bar);color:var(--ink)}
 td.rates b.lo{background:transparent;color:var(--ink3);box-shadow:inset 0 0 0 1px var(--line)}
 td.rates b.na{color:transparent}
-.tag{font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.06em;color:var(--hi-ink);background:var(--hi);padding:1px 5px;border-radius:2px;margin-left:8px;vertical-align:middle;font-style:normal;font-weight:500}
+.tag{font-family:"Roboto Mono",monospace;font-size:9.5px;letter-spacing:.06em;color:var(--hi-ink);background:var(--hi);padding:1px 5px;border-radius:2px;margin-left:8px;vertical-align:middle;font-style:normal;font-weight:500}
 .flexbox{padding:4px 20px 16px;border-top:1px solid var(--line)}
 .fcols{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
 .ftab td.w{display:none}
-.ftab td.k{width:38px;font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink3);white-space:nowrap;text-align:right}
-.ftab .wh{font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3);border:1px solid var(--line);border-radius:2px;padding:0 4px;margin-right:6px;vertical-align:middle}
+.ftab td.k{width:38px;font-family:"Roboto Mono",monospace;font-size:11px;color:var(--ink3);white-space:nowrap;text-align:right}
+.ftab .wh{font-family:"Roboto Mono",monospace;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3);border:1px solid var(--line);border-radius:2px;padding:0 4px;margin-right:6px;vertical-align:middle}
 .ftab .wh.main{color:var(--accent);border-color:var(--accent)}
-.ftab td.r{width:48px;text-align:right;font-family:"JetBrains Mono",monospace;font-size:12px}
-.ftab td.a{width:64px;text-align:right;font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--ink3)}
+.ftab td.r{width:48px;text-align:right;font-family:"Roboto Mono",monospace;font-size:12px}
+.ftab td.a{width:64px;text-align:right;font-family:"Roboto Mono",monospace;font-size:11.5px;color:var(--ink3)}
 .ftab td.name{padding-left:0}
 button.copy{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--accent);font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:15px;padding:4px 11px;border-radius:4px;cursor:pointer;margin-left:auto}
 button.copy:hover,button.copy:focus-visible{border-color:var(--accent);outline:none}
-.rsplits{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--ink3);padding:4px 0 0}
+.rsplits{font-family:"Roboto Mono",monospace;font-size:11.5px;color:var(--ink3);padding:4px 0 0}
 .empty{padding:14px 20px;color:var(--ink3);font-size:13px}
 details.events{flex-basis:100%;font-size:13px;color:var(--ink2)}
 details.events summary{cursor:pointer;font-family:"Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.08em;font-size:13px;color:var(--ink3)}
 details.events .evwrap{overflow-x:auto;margin-top:8px}
 details.events table{max-width:760px;font-size:12.5px}
 details.events td{padding:2px 8px 2px 0;white-space:nowrap}
-details.events td.r{text-align:right;font-family:"JetBrains Mono",monospace;font-size:11.5px}
+details.events td.r{text-align:right;font-family:"Roboto Mono",monospace;font-size:11.5px}
 td.rates b.sb{background:transparent;color:var(--ink2);box-shadow:inset 0 0 0 1px var(--ink3);border-style:dotted}
 td.ops{width:74px;padding:0 0 0 4px;white-space:nowrap;text-align:right}
-.bcols td.a{width:38px;text-align:right;font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--ink3);padding-right:0}
-td.price{width:54px;text-align:right;font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--ink2);white-space:nowrap}
+.bcols td.a{width:38px;text-align:right;font-family:"Roboto Mono",monospace;font-size:11.5px;color:var(--ink3);padding-right:0}
+td.price{width:54px;text-align:right;font-family:"Roboto Mono",monospace;font-size:11.5px;color:var(--ink2);white-space:nowrap}
 td.price a{color:inherit;text-decoration:none;border-bottom:1px dotted var(--line)}
 td.price a:hover{color:var(--accent);border-bottom-color:var(--accent)}
 td.price.hi{color:var(--fury)}
 .cnt .cost{font-weight:600;color:var(--ink)}
 .stats{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;padding:10px 20px 0}
-.stat{font-family:"JetBrains Mono",monospace;font-size:11.5px;padding:3px 8px;border:1px solid var(--line);border-radius:3px;color:var(--ink2);background:var(--bg);white-space:nowrap}
+.stat{font-family:"Roboto Mono",monospace;font-size:11.5px;padding:3px 8px;border:1px solid var(--line);border-radius:3px;color:var(--ink2);background:var(--bg);white-space:nowrap}
 .stat b{font-weight:500;color:var(--ink)}
 .stat.ok b{color:var(--calm)} .stat.bad{border-color:var(--fury)} .stat.bad b{color:var(--fury)}
 .stat.cost b{font-size:12.5px}
 .stats .hbtns{margin-left:auto}
 .bcols td.a.good{color:var(--calm)} .bcols td.a.poor{color:var(--fury)}
-td.ops button,.addrow button,button.reset{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink2);font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:500;line-height:1;padding:3px 4px;border-radius:3px;cursor:pointer;margin-left:2px}
+td.ops button,.addrow button,button.reset{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink2);font-family:"Roboto Mono",monospace;font-size:10px;font-weight:500;line-height:1;padding:3px 4px;border-radius:3px;cursor:pointer;margin-left:2px}
 td.ops button:hover,.addrow button:hover,button.reset:hover{border-color:var(--accent);color:var(--accent)}
 td.ops button:disabled{opacity:.3;cursor:default}
 tr.card:hover td.ops button{border-color:var(--ink3)}
@@ -241,7 +241,7 @@ button.reset{font-size:11px;padding:3px 7px}
 .chip.save{display:inline-flex;align-items:center;gap:6px;padding:3px 4px 3px 8px}
 .chip.save b{font-weight:600}
 .chip.save small{color:var(--ink3);font-size:10.5px}
-.chip.save button{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink2);font-family:"JetBrains Mono",monospace;font-size:10.5px;line-height:1;padding:3px 5px;border-radius:3px;cursor:pointer;margin:0}
+.chip.save button{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink2);font-family:"Roboto Mono",monospace;font-size:10.5px;line-height:1;padding:3px 5px;border-radius:3px;cursor:pointer;margin:0}
 .chip.save button:hover{border-color:var(--accent);color:var(--accent)}
 .chip.save.cur{border-color:var(--accent)}
 .ctl.io button{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink2);font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:15px;padding:5px 11px;border-radius:4px;cursor:pointer}
