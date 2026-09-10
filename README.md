@@ -22,7 +22,7 @@ each and are left out. The "Events in the sample" dropdown under the title
 lists every event with its date, field, cut, and how many placings inside the
 cut posted a list.
 
-## Two modes
+## Three modes
 
 **Flex sheet.** For each legend, every card that showed up in a sampled list,
 at the highest copy count any single list ran. Own those copies and you can
@@ -85,6 +85,24 @@ with the flex slots marked, editable, saveable and shareable.
   scrape behind tcg-price-tracker and are baked in with their date; refresh
   them by re-running the price step when rebuilding `P` (`P.prices`,
   `P.meta.prices_asof`).
+
+**Buy list.** A shopping list built from whatever each legend's list is right
+now on the page.
+
+- Tiles turn legends on and off. For every legend that is on, the list uses
+  your edited or loaded working copy if you have one, otherwise the generic
+  list under the current event-size and placing filters, plus 0 / 5 / 10 /
+  all of its next-in-line flex slots (your choice). Legend cards and the 12
+  runes are included.
+- **One at a time** needs the most copies any single deck uses; **All at
+  once** sums every deck. Columns: price (cheapest printing), copies needed,
+  line total, one column per legend that is on (flex copies marked), the
+  printing, and the lowest listing. Headers sort.
+- Tick a card as bought and it drops off the list and out of the total;
+  "Everything" shows ticked rows struck through. Which legends are on, the
+  flex setting and ticked cards are remembered in the browser.
+- **Copy buy list** puts the still-to-buy rows on the clipboard as text with
+  quantity, card, unit price and printing.
 
 ## Filters and detail
 

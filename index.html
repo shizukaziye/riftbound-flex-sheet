@@ -91,6 +91,45 @@ body[data-view="combined"] .v-sep{display:none}
 body[data-view="separate"] .v-comb{display:none}
 body[data-mode="build"] .v-sheet{display:none}
 body[data-mode="sheet"] .v-build{display:none}
+body[data-mode="buy"] .v-sheet,body[data-mode="buy"] .v-build,body[data-mode="buy"] nav{display:none}
+body[data-mode="buy"] .layout{grid-template-columns:1fr}
+body[data-mode="sheet"] .v-buy,body[data-mode="build"] .v-buy{display:none}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:8px;padding:14px 20px 6px}
+.tile{background:var(--bg);border:1px solid var(--line);border-left:4px solid var(--line);padding:8px 10px 7px;cursor:pointer;text-align:left;font:inherit;color:inherit}
+.tile:hover{border-color:var(--accent)}
+.tile[aria-pressed="true"]{border-left-color:var(--accent);background:var(--panel)}
+.tile[aria-pressed="false"]{opacity:.55}
+.tile[aria-pressed="false"] .tot{text-decoration:line-through;color:var(--ink3)}
+.tile h4{font-family:"Barlow Condensed",sans-serif;font-size:19px;font-weight:700;margin:0;line-height:1.05;letter-spacing:0;text-transform:none;color:var(--ink)}
+.tile .tot{font-family:"JetBrains Mono",monospace;font-size:15px;font-weight:500;margin-top:3px}
+.tile .sm{font-size:11px;color:var(--ink3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile.all{border-left-color:var(--ink);opacity:1}
+.buyctl{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;padding:8px 20px 12px;font-size:13px;color:var(--ink2)}
+.buyctl .seg button{font-size:15px;padding:4px 10px}
+.buyctl .sum{margin-left:auto;font-family:"JetBrains Mono",monospace;font-size:12.5px;color:var(--ink2)}
+.buyctl .sum b{color:var(--ink);font-weight:500}
+.buywrap{overflow-x:auto;padding:0 20px 16px}
+table.buy th{position:sticky;top:calc(var(--loseii-nav-offset,0px));background:var(--panel);z-index:1;font-family:"Barlow Condensed",sans-serif;font-size:12.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);text-align:left;padding:6px 6px;border-bottom:2px solid var(--line);white-space:nowrap;cursor:pointer;user-select:none}
+table.buy th.r{text-align:right} table.buy th.d{text-align:center;color:var(--ink3);min-width:38px}
+table.buy th[aria-sort]{color:var(--accent)}
+table.buy td{white-space:nowrap}
+table.buy td.name{font-weight:600;white-space:normal;min-width:150px}
+table.buy td.name small{display:block;font-weight:400;color:var(--ink3);font-size:11px}
+table.buy td.d{text-align:center;color:var(--ink3);font-family:"JetBrains Mono",monospace;font-size:12px}
+table.buy td.d b{color:var(--ink);font-weight:500}
+table.buy td.d i{font-style:normal;color:var(--hi-ink);background:var(--hi);border-radius:2px;padding:0 4px}
+table.buy td.need{font-family:"JetBrains Mono",monospace;font-size:14px;font-weight:500;text-align:right}
+table.buy td.money{font-family:"JetBrains Mono",monospace;font-size:12.5px;text-align:right}
+table.buy td.money.unit{color:var(--ink);font-weight:500}
+table.buy td.money.tot{font-weight:500;color:var(--ink)}
+table.buy td.print{color:var(--ink2);font-size:12.5px}
+table.buy td.print span{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink3)}
+table.buy tr.done td{opacity:.45;text-decoration:line-through}
+table.buy tr.done td.chk{opacity:1;text-decoration:none}
+table.buy td.chk{width:30px;padding-right:0}
+table.buy input[type=checkbox]{width:15px;height:15px;accent-color:var(--accent);cursor:pointer}
+.bcopy{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--accent);font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:15px;padding:4px 11px;border-radius:4px;cursor:pointer}
+.bcopy:hover{border-color:var(--accent)}
 tr.card{cursor:pointer}
 tr.card:hover td,tr.card:focus-visible td{background:var(--bg)}
 tr.card:focus-visible{outline:none}
@@ -178,11 +217,12 @@ button.reset{font-size:11px;padding:3px 7px}
   <p class="v-sheet"><b>Reading the sheet.</b> The number is the max copies seen (a 1-of in one list, 0 in another, 2 in a third → shows as <b>2</b>). The bar is how many of that legend's lists ran the card at all. Rows tagged <i>core</i> were in every list. <b>Separate</b> tallies main deck and sideboard on their own; <b>Combined</b> adds each list's main and sideboard copies first, then takes the max, which is the count you need to own to build any one list.</p>
   <p class="v-build"><b>Reading the generic list.</b> Main deck and sideboard are treated as one 50-card pool. Every copy of every card is a slot, scored by the share of lists that ran at least that many copies across main + sideboard (over lists that posted a sideboard). The 50 best slots make the pool, then the 40 that most often sat in the main deck become the main deck and the other 10 the sideboard. The three cells on each row are the pool shares for the 1st, 2nd and 3rd copy: filled = <b>locked</b> (two thirds or more), outlined = <b>flex</b>, dotted = a copy this list keeps in the sideboard. Hover a cell for the main / side split. The last number on each row is the <b>average placing</b> of the lists that ran at least that many copies, green when a point or more better than the sample average and red when a point or more worse; the header carries the mean over every copy you have picked, next to the generic list's figure once you edit.</p>
   <p class="v-build"><b>Adjusting the list.</b> On any row, <b>−</b> drops a copy, <b>+</b> adds one (up to 3 in total), and <b>▾S</b> / <b>▴M</b> move one between main and sideboard. Anything you drop below the generic count shows under <b>Removed</b> with add-back buttons; <b>Next in line</b> and the add box bring in cards that were never in. Counts turn red when the list is off 40 / 10 / 3. Edits are kept per legend in this browser until you press Reset. <b>Save</b> keeps a named copy under the legend (Load, Link, delete from its chip), <b>Link</b> copies a URL that carries the whole list so it opens on any machine, and <b>Export</b> / <b>Import</b> in the bar move every save between browsers as text.</p>
+  <p class="v-buy"><b>Reading the buy list.</b> Turn legends on and off with the tiles. For each legend that is on, the list uses <b>whatever that legend's list is right now on this page</b>: your edited or loaded copy if you have one, otherwise the generic list under the current event-size and placing filters, plus as many of its next-in-line flex slots as you choose. Legend cards and the 12 runes are included. <b>One at a time</b> needs the most copies any single deck uses; <b>All at once</b> sums every deck. Tick cards as you buy them.</p>
   <p><b>Prices</b> are the TCGplayer market price of the cheapest printing of each card (base, alternate art, promo or overnumbered, whichever is lowest); hover a price for the printing and the lowest single listing, click it to open TCGplayer. Prices over $20 are red. The generic-list header totals the whole list including the legend card and 12 runes.</p>
   <p><b>Click any row</b> for the copy split: how many lists ran it at 3, 2 or 1 copies or not at all, their share, and the average placing of each group. Average placing mixes deep cuts (down to 64th) with shallow ones (top 4), so a card common at small events reads better than it is; use the event-size filter to compare like with like.</p>
 </div>
 <div class="ctlbar" role="group" aria-label="Controls">
-  <div class="ctl"><span class="lab">Mode</span><span class="seg" data-key="mode"><button type="button" data-v="sheet">Flex sheet</button><button type="button" data-v="build">Generic list</button></span></div>
+  <div class="ctl"><span class="lab">Mode</span><span class="seg" data-key="mode"><button type="button" data-v="sheet">Flex sheet</button><button type="button" data-v="build">Generic list</button><button type="button" data-v="buy">Buy list</button></span></div>
   <div class="ctl v-sheet"><span class="lab">Sideboard</span><span class="seg" data-key="view"><button type="button" data-v="separate">Separate</button><button type="button" data-v="combined">Combined</button></span></div>
   <div class="ctl"><span class="lab">Event size</span><span class="seg" data-key="size"><button type="button" data-v="0">Any</button><button type="button" data-v="200">200+</button><button type="button" data-v="400">400+</button><button type="button" data-v="800">800+</button><button type="button" data-v="1600">1600+</button></span></div>
   <div class="ctl"><span class="lab">Placing</span><span class="seg" data-key="place"><button type="button" data-v="0">Any</button><button type="button" data-v="1">Winners</button><button type="button" data-v="4">Top 4</button><button type="button" data-v="8">Top 8</button><button type="button" data-v="16">Top 16</button><button type="button" data-v="32">Top 32</button></span></div>
@@ -231,6 +271,12 @@ const state = {mode:'sheet', view:'separate', size:0, place:0};
 let EDITS = {}; try{ EDITS = JSON.parse(localStorage.getItem('flex-edits')||'{}') || {}; }catch(e){}
 const saveEdits = () => { try{ localStorage.setItem('flex-edits', JSON.stringify(EDITS)); }catch(e){} };
 let SAVES = {}; try{ SAVES = JSON.parse(localStorage.getItem('flex-saves')||'{}') || {}; }catch(e){}
+const BUY = {on:[], flexN:10, count:'max', show:'open', sort:'cost', dir:-1};
+try{ const b = JSON.parse(localStorage.getItem('flex-buy')||'{}'); for(const k of ['on','flexN','count','show','sort','dir']) if(b[k]!==undefined) BUY[k]=b[k]; }catch(e){}
+if(!BUY.on.length) BUY.on = Object.keys(EDITS).filter(l=>P.data[l]);
+const saveBuy = () => { try{ localStorage.setItem('flex-buy', JSON.stringify(BUY)); }catch(e){} };
+let BOUGHT = {}; try{ BOUGHT = JSON.parse(localStorage.getItem('flex-buy-done')||'{}') || {}; }catch(e){}
+const saveBought = () => { try{ localStorage.setItem('flex-buy-done', JSON.stringify(BOUGHT)); }catch(e){} };
 const saveSaves = () => { try{ localStorage.setItem('flex-saves', JSON.stringify(SAVES)); }catch(e){} };
 const b64e = str => btoa(unescape(encodeURIComponent(str))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 const b64d = str => decodeURIComponent(escape(atob(str.replace(/-/g,'+').replace(/_/g,'/'))));
@@ -601,21 +647,81 @@ function sheetSection(leg, decks){
   </section>`;
 }
 
+// ---------- buy list ----------
+// what a legend needs right now: its current list on this page plus the first N next-in-line flex slots
+function legendNeeds(leg, N){
+  const decks = FD[leg]; if(!decks || !decks.length) return null;
+  const G = computeGeneric(leg, decks), cur = current(leg, G), info = P.legends[leg];
+  const need = {}, flex = {};
+  for(const [c,q] of Object.entries(cur.main)) need[c]=(need[c]||0)+q;
+  for(const [c,q] of Object.entries(cur.side)) need[c]=(need[c]||0)+q;
+  const next=[]; for(const s of G.PS){ const comb=(cur.main[s.card]||0)+(cur.side[s.card]||0); if(s.k===comb+1 && comb<3 && s.rate>=ALT) next.push(s); }
+  next.sort((a,b)=>b.rate-a.rate || a.avg-b.avg);
+  for(const s of next.slice(0,N)){ if(s.k>(need[s.card]||0)){ flex[s.card]=s.k-(need[s.card]||0); need[s.card]=s.k; } }
+  const items = {}; // card -> {q, group, fx}
+  for(const [c,q] of Object.entries(need)) items[c]={q, group:'card', fx:flex[c]||0};
+  for(const c of Object.keys(cur.bf)) if(cur.bf[c]) items[c]={q:1, group:'bf', fx:0};
+  items[info.full]={q:1, group:'legend', fx:0};
+  const split = (G.splits[0]||[''])[0]; if(split) for(const part of split.split(' / ')){ const [q,...rest]=part.split(' '); items[rest.join(' ')+' Rune']={q:+q, group:'rune', fx:0}; }
+  let cost=0, flexCost=0; for(const [c,it] of Object.entries(items)){ const v=priceOf(c)||0; cost+=v*it.q; flexCost+=v*it.fx; }
+  return {items, cost, flexCost, edited: !!EDITS[leg], name: cur.name||'', n: decks.length};
+}
+function buySection(){
+  const N = BUY.flexN, all = {}, per = {};
+  for(const leg of P.order){ const r = legendNeeds(leg, N); if(r) all[leg]=r; }
+  const on = BUY.on.filter(l=>all[l]);
+  for(const leg of on) for(const [c,it] of Object.entries(all[leg].items)){ (per[c] = per[c]||{group:it.group, per:{}, fx:{}}).per[leg]=it.q; if(it.fx) per[c].fx[leg]=it.fx; }
+  const needOf = c => { const o=per[c]; let mx=0, sm=0; for(const q of Object.values(o.per)){ if(q>mx) mx=q; sm+=q; } return BUY.count==='all'?sm:mx; };
+  const rows = Object.keys(per).map(c=>({card:c, group:per[c].group, need:needOf(c), price:priceOf(c)||0, line:(priceOf(c)||0)*needOf(c)}));
+  const total = rows.reduce((a,r)=>a+r.line,0), toBuy = rows.filter(r=>!BOUGHT[r.card]);
+  const nOn = on.length;
+  const tiles = `<button type="button" class="tile all" data-buy="all" aria-pressed="${nOn===P.order.length}" title="turn every legend on"><h4>${nOn?nOn:'No'} legend${nOn===1?'':'s'} on</h4><div class="tot">${money(total)}</div><div class="sm">${rows.length} distinct cards · ${BUY.count==='all'?'summed':'max copies'}</div></button>` +
+    P.order.map(leg=>{ const r=all[leg]; const isOn=on.includes(leg); if(!r) return `<button type="button" class="tile" data-buy="toggle" data-leg="${esc(leg)}" aria-pressed="false" disabled><h4>${esc(leg)}</h4><div class="tot">–</div><div class="sm">no lists under these filters</div></button>`; return `<button type="button" class="tile" data-buy="toggle" data-leg="${esc(leg)}" aria-pressed="${isOn}" title="${isOn?'click to leave '+leg+' out':'click to include '+leg}"><h4>${esc(leg)}</h4><div class="tot">${money(r.cost)}</div><div class="sm">${r.edited?(r.name?esc(r.name):'edited list'):'generic'}${r.flexCost?` · +${money(r.flexCost)} flex`:''}</div></button>`; }).join('');
+  const seg = (key, opts) => `<span class="seg">${opts.map(([v,l])=>`<button type="button" data-buy="set" data-key="${key}" data-v="${v}" aria-pressed="${String(BUY[key])===String(v)}">${l}</button>`).join('')}</span>`;
+  const ctl = `<div class="buyctl"><span class="lab">Flex slots</span>${seg('flexN',[[0,'None'],[5,'5'],[10,'10'],[14,'All shown']])}<span class="lab">Count</span>${seg('count',[['max','One at a time'],['all','All at once']])}<span class="lab">Show</span>${seg('show',[['open','Still to buy'],['every','Everything']])}<button type="button" class="bcopy" data-buy="copy">Copy buy list</button><span class="sum">${nOn?`<b>${toBuy.reduce((a,r)=>a+r.need,0)}</b> cards still to buy · <b>${money(toBuy.reduce((a,r)=>a+r.line,0))}</b> at market`:'turn on a legend above'}</span></div>`;
+  const shown = (BUY.show==='every' ? rows : toBuy).slice().sort((a,b)=>{ const k=BUY.sort; let va,vb; if(k==='card'){ va=a.card; vb=b.card; } else if(on.includes(k)){ va=per[a.card].per[k]||0; vb=per[b.card].per[k]||0; } else { va=a[k]; vb=b[k]; } if(typeof va==='string') return BUY.dir*va.localeCompare(vb); return BUY.dir*(va-vb) || b.line-a.line || a.card.localeCompare(b.card); });
+  const th = (k,l,cls='') => `<th class="${cls}" data-buy="sort" data-k="${esc(k)}"${BUY.sort===k?` aria-sort="${BUY.dir<0?'descending':'ascending'}"`:''}>${l}</th>`;
+  const ABBR = {'Master Yi':'Yi',"Kha'Zix":'Kha',"Rek'Sai":'Rek','LeBlanc':'LeB'};
+  const head = `<tr><th class="chk"></th>${th('card','Card')}${th('price','Price','r')}${th('need','Need','r')}${th('line','Line','r')}${on.map(l=>th(l, ABBR[l]||l.slice(0,3),'d')).join('')}<th>Cheapest printing</th><th class="r">Lowest</th></tr>`;
+  let last=null;
+  const body = shown.map(r=>{ const pr=PR[r.card]; const grp=r.group!==last?' grp':''; last=r.group;
+    const cells = on.map(l=>{ const q=per[r.card].per[l]||0; if(!q) return '<td class="d">·</td>'; const fx=per[r.card].fx[l]||0; return `<td class="d"><b>${q}</b>${fx?`<i title="${fx} from the flex slots">+${fx}</i>`:''}</td>`; }).join('');
+    return `<tr class="${BOUGHT[r.card]?'done':''}${grp}"><td class="chk"><input type="checkbox" data-buy="done" data-c="${esc(r.card)}"${BOUGHT[r.card]?' checked':''} aria-label="bought ${esc(r.card)}"></td><td class="name">${esc(r.card)}<small>${r.group==='card'?'':r.group==='bf'?'battlefield':r.group}</small></td><td class="money unit">${money(r.price)}</td><td class="need">${r.need}</td><td class="money tot">${money(r.line)}</td>${cells}<td class="print">${pr?`<a href="${pr.u}" target="_blank" rel="noopener">${esc(pr.set)}</a> <span>${esc(pr.num)} · ${esc(pr.r)}</span>`:'–'}</td><td class="money">${pr&&pr.l!=null?money(pr.l):'–'}</td></tr>`; }).join('');
+  const table = nOn ? `<div class="buywrap"><table class="buy">${head}${body||`<tr><td colspan="${7+on.length}" class="miss" style="padding:14px 6px">Nothing left to buy for these legends.</td></tr>`}</table></div>` : '';
+  const text = ['// Riftbound buy list — '+on.join(', ')+(N?` + ${N} flex slots each`:'')+` · ${BUY.count==='all'?'all decks at once':'one deck at a time'}`, ...rows.slice().sort((a,b)=>b.line-a.line).filter(r=>!BOUGHT[r.card]).map(r=>`${r.need} ${r.card} — ${money(r.price)} each${PR[r.card]?` (${PR[r.card].set} ${PR[r.card].num})`:''}`), '', `// ${money(toBuy.reduce((a,r)=>a+r.line,0))} at TCGplayer market, cheapest printing per card, as of ${P.meta.prices_asof||''}`].join('\n');
+  return `<section class="legend v-buy" id="buy" data-leg=""><div class="lhead"><h2>Buy list</h2><span class="cnt">built from each legend's current list on this page${N?` + ${N} next-in-line flex slots`:''} · prices as of ${esc(P.meta.prices_asof||'')}</span></div><div class="tiles">${tiles}</div>${ctl}${table}<textarea id="buytext" hidden>${esc(text)}</textarea></section>`;
+}
+main.addEventListener('click', e=>{
+  const b = e.target.closest('[data-buy]'); if(!b || b.tagName==='INPUT') return;
+  const k = b.dataset.buy;
+  if(k==='toggle'){ const l=b.dataset.leg; BUY.on = BUY.on.includes(l) ? BUY.on.filter(x=>x!==l) : [...BUY.on, l]; }
+  else if(k==='all'){ BUY.on = BUY.on.length===P.order.length ? [] : P.order.slice(); }
+  else if(k==='set'){ BUY[b.dataset.key] = b.dataset.key==='flexN' ? +b.dataset.v : b.dataset.v; }
+  else if(k==='sort'){ const s=b.dataset.k; if(BUY.sort===s) BUY.dir=-BUY.dir; else { BUY.sort=s; BUY.dir = s==='card' ? 1 : -1; } }
+  else if(k==='copy'){ const t=document.getElementById('buytext').value; copyText(t); const old=b.textContent; b.textContent='Copied'; setTimeout(()=>b.textContent=old,1400); return; }
+  saveBuy(); const y=window.scrollY; render(); window.scrollTo(0,y);
+});
+main.addEventListener('change', e=>{ const cb=e.target.closest('input[data-buy="done"]'); if(!cb) return; if(cb.checked) BOUGHT[cb.dataset.c]=1; else delete BOUGHT[cb.dataset.c]; saveBought(); const y=window.scrollY; render(); window.scrollTo(0,y); });
+async function copyText(t){ try{ await navigator.clipboard.writeText(t); }catch(e){ const ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');}catch(_){} ta.remove(); } }
+
 // ---------- render ----------
 function render(){
   document.body.dataset.mode = state.mode; document.body.dataset.view = state.view;
   for(const seg of document.querySelectorAll('.seg[data-key]')){ const k=seg.dataset.key; for(const b of seg.querySelectorAll('button')) b.setAttribute('aria-pressed', String(String(state[k])===b.dataset.v)); }
   const srcTxt = state.size ? `events with ${state.size}+ players` : 'every sampled event';
+  const modeTxt = state.mode==='sheet' ? (state.view==='separate' ? 'Main deck and sideboard tallied on their own' : "Each list's main + sideboard copies added, then the max across lists") : state.mode==='build' ? 'Consensus list from the best-scoring slots' : 'Cards to buy for the legends that are on, from their current lists';
   const plTxt = state.place===1 ? ', winners only' : state.place ? `, lists placed top ${state.place}` : '';
-  document.getElementById('hint').textContent = (state.mode==='sheet' ? (state.view==='separate' ? 'Main deck and sideboard tallied on their own' : "Each list's main + sideboard copies added, then the max across lists") : 'Consensus list from the best-scoring slots') + `, over ${srcTxt}${plTxt}.`;
+  document.getElementById('hint').textContent = modeTxt + `, over ${srcTxt}${plTxt}.`;
   try{ localStorage.setItem('flex-state', JSON.stringify(state)); }catch(e){}
   let navH='', mainH='';
   for(const leg of P.order){
     const decks = filtered(P.data[leg]); FD[leg]=decks;
     navH += `<a href="#${slug(leg)}" class="${decks.length?'':'empty'}">${esc(leg)}<small>${decks.length?decks.length+' list'+(decks.length>1?'s':''):'none'}</small></a>`;
-    if(!decks.length){ mainH += `<section class="legend" id="${slug(leg)}" data-leg="${esc(leg)}"><div class="lhead"><h2>${esc(leg)}</h2><span class="cnt">no lists match the current source and placing filters</span></div>${deckLinks([], P.data[leg].missing)}</section>`; continue; }
+    if(!decks.length){ if(state.mode==='buy') continue; mainH += `<section class="legend" id="${slug(leg)}" data-leg="${esc(leg)}"><div class="lhead"><h2>${esc(leg)}</h2><span class="cnt">no lists match the current source and placing filters</span></div>${deckLinks([], P.data[leg].missing)}</section>`; continue; }
+    if(state.mode==='buy') continue;
     mainH += state.mode==='sheet' ? sheetSection(leg, decks) : buildSection(leg, decks);
   }
+  if(state.mode==='buy') mainH = buySection();
   nav.innerHTML = navH; main.innerHTML = mainH;
 }
 document.querySelector('.ctlbar').addEventListener('click', e=>{
