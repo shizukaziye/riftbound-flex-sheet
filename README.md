@@ -74,7 +74,17 @@ with the flex slots marked, editable, saveable and shareable.
   copy. Export in the control bar copies every save as JSON and Import merges
   that JSON back in, for moving saves between browsers.
 - **Copy list** puts the current list on the clipboard as plain text, grouped
-  by Champion, Units, Spells, Gear, Battlefields, Runes and Sideboard.
+  by Champion, Units, Spells, Gear, Battlefields, Runes and Sideboard, with
+  the list's market total as a trailing note.
+- **Prices.** Every row in both modes shows the TCGplayer market price of the
+  cheapest printing of that card (base, alternate art, promo or overnumbered,
+  whichever is lowest); hover for the printing and the lowest single listing,
+  click to open TCGplayer. Prices over $20 are red. The generic-list header
+  totals the whole list including the legend card and 12 runes, and shows the
+  generic list's total beside it once you edit. Prices come from the daily
+  scrape behind tcg-price-tracker and are baked in with their date; refresh
+  them by re-running the price step when rebuilding `P` (`P.prices`,
+  `P.meta.prices_asof`).
 
 ## Filters and detail
 
