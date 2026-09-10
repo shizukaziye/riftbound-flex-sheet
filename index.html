@@ -275,7 +275,7 @@ button.reset{font-size:11px;padding:3px 7px}
   <p class="v-build"><b>Reading the generic list.</b> Main deck and sideboard are treated as one 50-card pool. Every copy of every card is a slot, scored by the share of lists that ran at least that many copies across main + sideboard (over lists that posted a sideboard). The 50 best slots make the pool, then the 40 that most often sat in the main deck become the main deck and the other 10 the sideboard. The three cells on each row are the pool shares for the 1st, 2nd and 3rd copy: filled = <b>locked</b> (two thirds or more), outlined = <b>flex</b>, dotted = a copy this list keeps in the sideboard. Hover a cell for the main / side split. The last number on each row is the <b>average placing</b> of the lists that ran at least that many copies, green when a point or more better than the sample average and red when a point or more worse; the header carries the mean over every copy you have picked, next to the generic list's figure once you edit.</p>
   <p class="v-build"><b>Adjusting the list.</b> On any row, <b>−</b> drops a copy, <b>+</b> adds one (up to 3 in total), and <b>▾S</b> / <b>▴M</b> move one between main and sideboard. Anything you drop below the generic count shows under <b>Removed</b> with add-back buttons; <b>Next in line</b> and the add box bring in cards that were never in. Counts turn red when the list is off 40 / 10 / 3. Edits are kept per legend in this browser until you press Reset. <b>Save</b> keeps a named copy under the legend (Load, Link, delete from its chip), <b>Link</b> copies a URL that carries the whole list so it opens on any machine, and <b>Export</b> / <b>Import</b> in the bar move every save between browsers as text.</p>
   <p class="v-buy"><b>Reading the buy list.</b> Turn legends on and off with the tiles. For each legend that is on, the list uses <b>whatever that legend's list is right now on this page</b>: your edited or loaded copy if you have one, otherwise the generic list under the current event-size and placing filters, plus as many of its next-in-line flex slots as you choose. Legend cards and the 12 runes are included. <b>One at a time</b> needs the most copies any single deck uses; <b>All at once</b> sums every deck. Tick cards as you buy them.</p>
-  <p class="v-cards"><b>Reading the cards table.</b> Every card in the game, with the share of sampled lists that ran it anywhere (main, sideboard, battlefields, runes, or as the legend) under the current event-size and placing filters. Legends shows which legends ran it and how many of their lists. Filter by rarity, set, type and domain, or search; "Not played" shows what never appeared. Sets and rarities come from each card's base printing on TCGplayer.</p>
+  <p class="v-cards"><b>Reading the cards table.</b> Every card in the game, with the share of sampled lists that ran it anywhere (main, sideboard, battlefields, runes, or as the legend) under the current event-size and placing filters. The share is out of the lists that could play it: lists whose legend has every domain of the card, or every list for colorless cards. Legends shows which legends ran it and how many of their lists. Filter by rarity, set, type and domain, or search; "Not played" shows what never appeared. Sets and rarities come from each card's base printing on TCGplayer.</p>
   <p><b>Prices</b> are the TCGplayer market price of the cheapest printing of each card (base, alternate art, promo or overnumbered, whichever is lowest); hover a price for the printing and the lowest single listing, click it to open TCGplayer. Prices over $20 are red. The generic-list header totals the whole list including the legend card and 12 runes.</p>
   <p><b>Click any row</b> for the copy split: how many lists ran it at 3, 2 or 1 copies or not at all, their share, and the average placing of each group. Average placing mixes deep cuts (down to 64th) with shallow ones (top 4), so a card common at small events reads better than it is; use the event-size filter to compare like with like.</p>
 </section>
@@ -770,7 +770,11 @@ function cardUsage(){
       for(const c of x.bf) hit(c, leg, 1, true);
       for(const [c,q] of Object.entries(x.r)) hit(c, leg, q, true);
     } }
-  return {runs, copies, mainRuns, legs, N};
+  // lists per legend, so a card can be measured against the lists whose legend has all of its domains
+  const perLeg = {}; for(const leg of P.order) perLeg[leg] = {n:(FD[leg]||[]).length, doms:(P.legends[leg].domains||'').split('/').filter(Boolean)};
+  const denomCache = {};
+  const denom = d => { const key=d||''; if(denomCache[key]!=null) return denomCache[key]; const need=key.split('/').filter(x=>x && x!=='colorless'); let t=0; for(const leg of P.order){ const pl=perLeg[leg]; if(need.every(x=>pl.doms.includes(x))) t+=pl.n; } return denomCache[key]=t; };
+  return {runs, copies, mainRuns, legs, N, denom};
 }
 function cardsRows(){
   const U = cardUsage(), q = CARDS.q.trim().toLowerCase();
@@ -784,7 +788,8 @@ function cardsRows(){
     if(CARDS.played==='yes' && !n) continue; if(CARDS.played==='no' && n) continue;
     if(q && !name.toLowerCase().includes(q)) continue;
     const lg = U.legs[name]||{}; const legList = Object.entries(lg).sort((a,b)=>b[1]-a[1]);
-    rows.push({name, t, g, d, set, rar, price, n, rate: U.N?n/U.N:0, nleg: legList.length, legs: legList, avg: n? U.copies[name]/n : 0, mainShare: n ? (U.mainRuns[name]||0)/n : 0});
+    const den = U.denom(d);
+    rows.push({name, t, g, d, set, rar, price, n, den, rate: den?n/den:0, nleg: legList.length, legs: legList, avg: n? U.copies[name]/n : 0, mainShare: n ? (U.mainRuns[name]||0)/n : 0});
   }
   const k = CARDS.sort, dir = CARDS.dir;
   rows.sort((a,b)=>{ let va=a[k], vb=b[k]; if(k==='price'){ va=va==null?-1:va; vb=vb==null?-1:vb; } if(k==='set'){ va=(P.setNames[va]||va); vb=(P.setNames[vb]||vb); } if(typeof va==='string') return dir*va.localeCompare(vb) || a.name.localeCompare(b.name); return dir*(va-vb) || b.rate-a.rate || a.name.localeCompare(b.name); });
@@ -792,9 +797,9 @@ function cardsRows(){
 }
 function cardsTable(R){
   const th = (k,l,cls='') => `<th class="${cls}" data-cards="sort" data-k="${k}"${CARDS.sort===k?` aria-sort="${CARDS.dir<0?'descending':'ascending'}"`:''}>${l}</th>`;
-  const head = `<tr>${th('name','Card')}${th('set','Set')}${th('rar','Rarity')}${th('price','Price','r')}${th('rate','Lists running it','r')}${th('nleg','Legends','r')}${th('avg','Avg copies','r')}${th('mainShare','In main','r')}<th>Where</th></tr>`;
+  const head = `<tr>${th('name','Card')}${th('set','Set')}${th('rar','Rarity')}${th('price','Price','r')}${th('rate','Lists running it · of lists in its colors','r')}${th('nleg','Legends','r')}${th('avg','Avg copies','r')}${th('mainShare','In main','r')}<th>Where</th></tr>`;
   const body = R.rows.map(r=>{ const doms=r.d.split('/').filter(Boolean).map(x=>`<i style="--rc:${DOM[x]||'var(--ink3)'}" title="${x}"></i>`).join(''); const legs=r.legs.slice(0,4).map(([l,c])=>`<b>${esc(l)}</b> ${c}`).join(' · ')+(r.legs.length>4?` · +${r.legs.length-4} more`:'');
-    return `<tr class="${r.n?'':'np'}"><td class="name">${esc(r.name)}<small>${doms}${esc(r.t.replace('/',' · '))}</small></td><td class="m" title="${esc(P.setNames[r.set]||r.set)}">${esc(r.set)}</td><td class="m">${esc(r.rar)}</td><td class="r">${r.price!=null?money(r.price):'–'}</td><td class="rate"><div class="bar"><i style="width:${pct(r.rate)}%"></i></div><span>${r.n}/${R.N} · ${pct(r.rate)}%</span></td><td class="r">${r.nleg||'–'}</td><td class="r">${r.n?r.avg.toFixed(1):'–'}</td><td class="r">${r.n?pct(r.mainShare)+'%':'–'}</td><td class="legs">${legs||'<span class="meta">not played</span>'}</td></tr>`; }).join('');
+    return `<tr class="${r.n?'':'np'}"><td class="name">${esc(r.name)}<small>${doms}${esc(r.t.replace('/',' · '))}</small></td><td class="m" title="${esc(P.setNames[r.set]||r.set)}">${esc(r.set)}</td><td class="m">${esc(r.rar)}</td><td class="r">${r.price!=null?money(r.price):'–'}</td><td class="rate" title="${r.n} of the ${r.den} lists whose legend has ${r.d&&r.d!=='colorless'?esc(r.d.replace('/',' and ')):'any domains'}"><div class="bar"><i style="width:${pct(r.rate)}%"></i></div><span>${r.n}/${r.den} · ${r.den?pct(r.rate):0}%</span></td><td class="r">${r.nleg||'–'}</td><td class="r">${r.n?r.avg.toFixed(1):'–'}</td><td class="r">${r.n?pct(r.mainShare)+'%':'–'}</td><td class="legs">${legs||'<span class="meta">not played</span>'}</td></tr>`; }).join('');
   return `<table class="cards">${head}${body||`<tr><td colspan="9" class="miss" style="padding:14px 6px">No cards match these filters.</td></tr>`}</table>`;
 }
 function cardsSection(){
@@ -802,7 +807,7 @@ function cardsSection(){
   const chip = (key, v, label, extra='') => `<button type="button" class="fchip${extra}" data-cards="chip" data-key="${key}" data-v="${esc(v)}" aria-pressed="${CARDS[key].includes(v)}"${extra?` style="--rc:${DOM[v]}"`:''}>${label}</button>`;
   const sets = [...new Set(Object.values(CA).map(v=>v[2]))].filter(x=>x!=='?').sort((a,b)=>{ const o=['OGN','SFD','UNL','VEN']; return (o.indexOf(a)<0?9:o.indexOf(a))-(o.indexOf(b)<0?9:o.indexOf(b)) || a.localeCompare(b); });
   const any = CARDS.rar.length||CARDS.set.length||CARDS.type.length||CARDS.dom.length||CARDS.played!=='all'||CARDS.q;
-  return `<section class="legend v-cards" id="cards" data-leg=""><div class="lhead"><h2>Cards</h2><span class="cnt">play rate of every card across ${R.N} sampled lists under the current filters</span></div>
+  return `<section class="legend v-cards" id="cards" data-leg=""><div class="lhead"><h2>Cards</h2><span class="cnt">play rate of every card · ${R.N} sampled lists under the current filters · each card is measured against the lists whose legend has all of its domains</span></div>
     <div class="filters">
       <div class="frow"><span class="lab">Played</span><span class="seg">${[['all','All'],['yes','Played'],['no','Not played']].map(([v,l])=>`<button type="button" data-cards="played" data-v="${v}" aria-pressed="${CARDS.played===v}">${l}</button>`).join('')}</span><input type="search" data-cards="q" value="${esc(CARDS.q)}" placeholder="search a card…" aria-label="search cards">${any?`<button type="button" class="clear" data-cards="clear">clear filters</button>`:''}</div>
       <div class="frow"><span class="lab">Rarity</span>${RARS.map(r=>chip('rar',r,r)).join('')}</div>

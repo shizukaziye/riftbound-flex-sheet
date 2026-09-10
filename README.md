@@ -108,7 +108,9 @@ now on the page.
 left out) across the sampled lists under the current filters.
 
 - Columns: set, rarity, price, share of lists running it anywhere (main,
-  sideboard, battlefields, runes, or as the legend) with a bar, how many
+  sideboard, battlefields, runes, or as the legend) with a bar, measured
+  against the lists whose legend has every domain of the card (all lists for
+  colorless cards such as battlefields), how many
   legends ran it, average copies when run, share of those runs where it sat
   in the main deck, and the legends with their list counts.
 - Filter chips for rarity, set, type and domain, a Played / Not played
