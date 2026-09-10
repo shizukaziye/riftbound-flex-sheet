@@ -125,7 +125,7 @@ button.copy:hover,button.copy:focus-visible{border-color:var(--accent);outline:n
 .rsplits{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--ink3);padding:4px 0 0}
 .empty{padding:14px 20px;color:var(--ink3);font-size:13px}
 td.rates b.sb{background:transparent;color:var(--ink2);box-shadow:inset 0 0 0 1px var(--ink3);border-style:dotted}
-td.ops{width:58px;padding:0 0 0 6px;white-space:nowrap;text-align:right}
+td.ops{width:84px;padding:0 0 0 6px;white-space:nowrap;text-align:right}
 td.ops button,.addrow button,button.reset{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink2);font-family:"JetBrains Mono",monospace;font-size:10.5px;font-weight:500;line-height:1;padding:3px 5px;border-radius:3px;cursor:pointer;margin-left:3px}
 td.ops button:hover,.addrow button:hover,button.reset:hover{border-color:var(--accent);color:var(--accent)}
 td.ops button:disabled{opacity:.3;cursor:default}
@@ -150,7 +150,7 @@ button.reset{font-size:11px;padding:3px 7px}
 <div class="how">
   <p class="v-sheet"><b>Reading the sheet.</b> The number is the max copies seen (a 1-of in one list, 0 in another, 2 in a third → shows as <b>2</b>). The bar is how many of that legend's lists ran the card at all. Rows tagged <i>core</i> were in every list. <b>Separate</b> tallies main deck and sideboard on their own; <b>Combined</b> adds each list's main and sideboard copies first, then takes the max, which is the count you need to own to build any one list.</p>
   <p class="v-build"><b>Reading the generic list.</b> Main deck and sideboard are treated as one 50-card pool. Every copy of every card is a slot, scored by the share of lists that ran at least that many copies across main + sideboard (over lists that posted a sideboard). The 50 best slots make the pool, then the 40 that most often sat in the main deck become the main deck and the other 10 the sideboard. The three cells on each row are the pool shares for the 1st, 2nd and 3rd copy: filled = <b>locked</b> (two thirds or more), outlined = <b>flex</b>, dotted = a copy this list keeps in the sideboard. Hover a cell for the main / side split.</p>
-  <p class="v-build"><b>Adjusting the list.</b> Use <b>−</b> to drop a copy, <b>▾S</b> / <b>▴M</b> to move one between main and sideboard, and <b>+M</b> / <b>+S</b> on the "next in line" rows or the add box to bring a card in. Counts turn red when the list is off 40 / 10 / 3. Edits are kept per legend in this browser until you press Reset.</p>
+  <p class="v-build"><b>Adjusting the list.</b> On any row, <b>−</b> drops a copy, <b>+</b> adds one (up to 3 in total), and <b>▾S</b> / <b>▴M</b> move one between main and sideboard. Anything you drop below the generic count shows under <b>Removed</b> with add-back buttons; <b>Next in line</b> and the add box bring in cards that were never in. Counts turn red when the list is off 40 / 10 / 3. Edits are kept per legend in this browser until you press Reset.</p>
   <p><b>Click any row</b> for the copy split: how many lists ran it at 3, 2 or 1 copies or not at all, their share, and the average placing of each group. Average placing mixes big cuts (1–64) with smaller events where every list is a top 4, so read it as a hint, not a ranking.</p>
 </div>
 <div class="ctlbar" role="group" aria-label="Controls">
@@ -320,9 +320,10 @@ function listRows(G, cur, cards, where, leg){
     const mc = cur.main[c]||0, sc = cur.side[c]||0, comb = mc+sc;
     const flex = [...Array(comb)].some((_,i)=>{ const s=G.PB.get(key(c,i+1)); return !s || s.rate<LOCK; });
     const ch = isChampCard(c) ? ' champ' : '';
+    const full = comb>=3;
     const ops = where==='main'
-      ? opBtn('m-',c,'−','drop one from main') + opBtn('m2s',c,'▾S','move one to sideboard')
-      : opBtn('s-',c,'−','drop one from sideboard') + opBtn('s2m',c,'▴M','move one to main');
+      ? opBtn('m-',c,'−','drop one from main') + opBtn('m+',c,'+',full?'already 3 copies':'add one to main',full) + opBtn('m2s',c,'▾S','move one to sideboard')
+      : opBtn('s-',c,'−','drop one from sideboard') + opBtn('s+',c,'+',full?'already 3 copies':'add one to sideboard',full) + opBtn('s2m',c,'▴M','move one to main');
     return `<tr class="card" tabindex="0" role="button" aria-expanded="false" data-k="${where}" data-c="${esc(c)}"><td class="n v${cnt[c]}">${cnt[c]}</td><td class="name${ch}">${esc(c)}${flex?'<i class="tag">flex</i>':''}</td><td class="rates">${rateCells(G,c,mc,comb)}</td><td class="ops">${ops}</td></tr>`;
   }).join('');
 }
@@ -344,6 +345,22 @@ function bfTable(G, cur){
   return `<table>${cards.map(c=>{ const s=G.BB.get(key(c,1)), r=s?s.rate:0; return `<tr class="card" tabindex="0" role="button" aria-expanded="false" data-k="bf" data-c="${esc(c)}"><td class="n v1">1</td><td class="name">${esc(c)}${r<LOCK?'<i class="tag">flex</i>':''}</td><td class="rates"><b class="${r>=LOCK?'hi':'lo'}" title="${s?s.n:0} lists">${pct(r)}</b></td><td class="ops">${opBtn('bf-',c,'−','drop this battlefield')}</td></tr>`; }).join('')}</table>`;
 }
 const ftr = (r, ops) => `<tr class="card" tabindex="0" role="button" aria-expanded="false" data-k="${r.kind}" data-c="${esc(r.card)}"><td class="w">${r.where}</td><td class="name">${esc(r.card)}</td><td class="k">${r.kind==='bf'?'':(ORDN[r.k]||r.k+'th')+' copy'}</td><td class="r">${pct(r.rate)}%</td><td class="a">${r.avg.toFixed(1)}</td><td class="ops">${ops}</td></tr>`;
+function removedRows(G, cur){
+  const rows=[];
+  const cards = new Set([...Object.keys(G.main),...Object.keys(G.side)]);
+  for(const c of cards){
+    const gm=G.main[c]||0, gs=G.side[c]||0, cm=cur.main[c]||0, cs=cur.side[c]||0;
+    if(cm+cs >= gm+gs) continue;
+    const s = G.PB.get(key(c, cm+cs+1)) || {rate:0, avg:0};
+    rows.push({card:c, gm, gs, cm, cs, rate:s.rate, avg:s.avg});
+  }
+  rows.sort((a,b)=>b.rate-a.rate || a.card.localeCompare(b.card));
+  const was = r => [r.gm?`${r.gm} main`:'', r.gs?`${r.gs} side`:''].filter(Boolean).join(' + ');
+  const now = r => (r.cm+r.cs) ? [r.cm?`${r.cm} main`:'', r.cs?`${r.cs} side`:''].filter(Boolean).join(' + ') : 'out';
+  const full = r => r.cm+r.cs>=3;
+  const bfRows = Object.keys(G.bf).filter(c=>G.bf[c] && !cur.bf[c]).map(c=>{ const s=G.BB.get(key(c,1))||{rate:0}; return `<tr class="card" tabindex="0" role="button" aria-expanded="false" data-k="bf" data-c="${esc(c)}"><td class="w">bf</td><td class="name">${esc(c)}</td><td class="k">out</td><td class="r">${pct(s.rate)}%</td><td class="a"></td><td class="ops">${opBtn('bf+',c,'+','add this battlefield back')}</td></tr>`; }).join('');
+  return rows.map(r=>`<tr class="card" tabindex="0" role="button" aria-expanded="false" data-k="comb" data-c="${esc(r.card)}"><td class="w" title="generic list had ${was(r)}">was ${r.gm+r.gs}</td><td class="name">${esc(r.card)}</td><td class="k">${now(r)}</td><td class="r">${pct(r.rate)}%</td><td class="a">${r.avg?r.avg.toFixed(1):''}</td><td class="ops">${opBtn('m+',r.card,'+M','add one back to main',full(r))}${opBtn('s+',r.card,'+S','add one back to sideboard',full(r))}</td></tr>`).join('') + bfRows;
+}
 function flexTables(G, cur){
   const weak=[], next=[];
   const cards = new Set([...Object.keys(cur.main),...Object.keys(cur.side)]);
@@ -359,14 +376,14 @@ function flexTables(G, cur){
   const weakH = weak.map(r=> ftr(r, r.kind==='bf' ? opBtn('bf-',r.card,'−','drop this battlefield') : opBtn(r.where==='main'?'m-':'s-', r.card, '−', `drop one from ${r.where}`))).join('');
   const nextH = next.slice(0,ALT_MAX).map(r=> ftr(r, opBtn('m+',r.card,'+M','add one to main') + opBtn('s+',r.card,'+S','add one to sideboard'))).join('')
               + bfNext.map(r=> ftr(r, opBtn('bf+',r.card,'+','add this battlefield'))).join('');
-  return {weakH, nextH};
+  return {weakH, nextH, removedH: removedRows(G, cur)};
 }
 function buildSection(leg, decks){
   const d = P.data[leg], info = P.legends[leg], n = decks.length;
   const G = computeGeneric(leg, decks), cur = current(leg, G), edited = !!EDITS[leg];
   const nm = sum(cur.main), ns = sum(cur.side), nb = sum(cur.bf);
   const st = (v,t) => `<span class="${v===t?'ok':'bad'}">${v}/${t}</span>`;
-  const {weakH, nextH} = flexTables(G, cur);
+  const {weakH, nextH, removedH} = flexTables(G, cur);
   const doms = (info.domains||'').split('/').filter(Boolean).map(k=>`<span class="chip dom" style="--rc:${DOM[k]||'var(--ink3)'}">${k}</span>`).join('');
   const top = G.splits[0], others = G.splits.slice(1,4).map(([k,v])=>`${esc(k)} ×${v}`).join(' · ');
   const text = listText(leg, info, cur, top);
@@ -389,7 +406,8 @@ function buildSection(leg, decks){
     <div class="flexbox"><h3>Flex choices <span>weakest slots in the list vs. next in line · click a row for its copy split</span></h3>
       <div class="fcols">
         <div><h4>Cut first (in the list, under ${pct(LOCK)}% of the pool)</h4>${weakH?`<table class="ftab">${weakH}</table>`:'<p class="miss" style="padding:6px 0 0">Every slot is locked.</p>'}</div>
-        <div><h4>Next in line (not in the list, ${pct(ALT)}%+)</h4>${nextH?`<table class="ftab">${nextH}</table>`:'<p class="miss" style="padding:6px 0 0">Nothing else reached '+pct(ALT)+'%.</p>'}
+        <div>${removedH?`<h4>Removed from the generic list (add back)</h4><table class="ftab">${removedH}</table>`:''}
+          <h4>Next in line (not in the list, ${pct(ALT)}%+)</h4>${nextH?`<table class="ftab">${nextH}</table>`:'<p class="miss" style="padding:6px 0 0">Nothing else reached '+pct(ALT)+'%.</p>'}
           <div class="addrow"><input list="${dl}" placeholder="add any card seen for ${esc(leg)}…" aria-label="card to add"><datalist id="${dl}">${poolCards.map(c=>`<option value="${esc(c)}">`).join('')}</datalist>${opBtn('add-m','','+M','add to main')}${opBtn('add-s','','+S','add to sideboard')}</div>
         </div>
       </div>
