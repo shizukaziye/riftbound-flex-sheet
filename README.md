@@ -22,7 +22,7 @@ each and are left out. The "Events in the sample" dropdown under the title
 lists every event with its date, field, cut, and how many placings inside the
 cut posted a list.
 
-## Three modes
+## Four modes
 
 **Flex sheet.** For each legend, every card that showed up in a sampled list,
 at the highest copy count any single list ran. Own those copies and you can
@@ -103,6 +103,19 @@ now on the page.
   flex setting and ticked cards are remembered in the browser.
 - **Copy buy list** puts the still-to-buy rows on the clipboard as text with
   quantity, card, unit price and printing.
+
+**Cards.** Play rate of every real card in the game (925 names, tokens
+left out) across the sampled lists under the current filters.
+
+- Columns: set, rarity, price, share of lists running it anywhere (main,
+  sideboard, battlefields, runes, or as the legend) with a bar, how many
+  legends ran it, average copies when run, share of those runs where it sat
+  in the main deck, and the legends with their list counts.
+- Filter chips for rarity, set, type and domain, a Played / Not played
+  switch, and a search box. Headers sort. Filters are remembered in the
+  browser.
+- Set and rarity come from each card's base printing on TCGplayer (`cardsAll`
+  in `P`, built from the tracker's Riftbound dump).
 
 ## Filters and detail
 
