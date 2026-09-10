@@ -31,15 +31,24 @@ rebuild any of the sampled lists, or any mix of them.
 champion), 10-card sideboard, 3 battlefields and 12-rune split per legend,
 with the flex slots marked.
 
-- Every copy of every card is a *slot*, scored by the share of lists that ran
-  at least that many copies (so "2nd copy of Gust" is its own slot). The list
-  is the 40 best-scoring main slots, the 10 best sideboard slots, never more
-  than 3 total copies of a card across both, and the 3 best battlefields. The
-  legend's own champion is always seeded in. Runes are the most common exact
-  split, with the other splits seen listed beside it.
-- Each row shows the shares for the 1st, 2nd and 3rd copy. Filled cells are
-  *locked* (two thirds of lists or more). Outlined cells are *flex* slots that
-  made the cut anyway.
+- Main deck and sideboard are one 50-card pool. Every copy of every card is a
+  *slot*, scored by the share of lists that ran at least that many copies
+  across main + sideboard (over lists that posted a sideboard), so "2nd copy
+  of Gust" is its own slot. The 50 best slots make the pool, then the 40 that
+  most often sat in the main deck become the main deck and the other 10 the
+  sideboard. A card never exceeds 3 copies in total. The legend's own champion
+  is always seeded in. Battlefields are the 3 best by share. Runes are the
+  most common exact split, with the other splits seen listed beside it.
+- Each row shows the pool shares for the 1st, 2nd and 3rd copy. Filled cells
+  are *locked* (two thirds of lists or more), outlined cells are *flex* slots
+  that made the cut anyway, dotted cells are copies this list keeps in the
+  sideboard. Hover a cell for the main / side split.
+- **Adjusting the list.** Every row has controls: − drops a copy, ▾S / ▴M
+  move a copy between main and sideboard, +M / +S on the "next in line" rows
+  or the add box bring a card in, and battlefields swap the same way. The
+  header counts turn red when the list is off 40 / 10 / 3. Edits are kept per
+  legend in the browser (localStorage) until Reset; Copy list copies the
+  edited list.
 - **Flex choices** pairs the weakest slots in the list ("cut first") with the
   next cards in line that did not make it ("next in line", 10% or more),
   each with its share and average placing.

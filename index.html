@@ -124,6 +124,20 @@ button.copy{appearance:none;border:1px solid var(--line);background:var(--panel)
 button.copy:hover,button.copy:focus-visible{border-color:var(--accent);outline:none}
 .rsplits{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--ink3);padding:4px 0 0}
 .empty{padding:14px 20px;color:var(--ink3);font-size:13px}
+td.rates b.sb{background:transparent;color:var(--ink2);box-shadow:inset 0 0 0 1px var(--ink3);border-style:dotted}
+td.ops{width:58px;padding:0 0 0 6px;white-space:nowrap;text-align:right}
+td.ops button,.addrow button,button.reset{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink2);font-family:"JetBrains Mono",monospace;font-size:10.5px;font-weight:500;line-height:1;padding:3px 5px;border-radius:3px;cursor:pointer;margin-left:3px}
+td.ops button:hover,.addrow button:hover,button.reset:hover{border-color:var(--accent);color:var(--accent)}
+td.ops button:disabled{opacity:.3;cursor:default}
+tr.card:hover td.ops button{border-color:var(--ink3)}
+.cnt .bad{color:var(--fury);font-weight:600}
+.cnt .ok{color:var(--calm)}
+.tag.edit{color:var(--accent-ink);background:var(--accent)}
+button.reset{font-size:11px;padding:3px 7px}
+.addrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0 2px}
+.addrow input{font:inherit;font-size:13px;padding:4px 8px;border:1px solid var(--line);border-radius:3px;background:var(--bg);color:var(--ink);min-width:220px}
+.addrow input:focus{outline:2px solid var(--accent);outline-offset:-1px}
+.ftab td.w{width:36px}
 </style>
 </head>
 <body>
@@ -135,7 +149,8 @@ button.copy:hover,button.copy:focus-visible{border-color:var(--accent);outline:n
 </header>
 <div class="how">
   <p class="v-sheet"><b>Reading the sheet.</b> The number is the max copies seen (a 1-of in one list, 0 in another, 2 in a third → shows as <b>2</b>). The bar is how many of that legend's lists ran the card at all. Rows tagged <i>core</i> were in every list. <b>Separate</b> tallies main deck and sideboard on their own; <b>Combined</b> adds each list's main and sideboard copies first, then takes the max, which is the count you need to own to build any one list.</p>
-  <p class="v-build"><b>Reading the generic list.</b> Every copy of every card is a slot, scored by the share of lists that ran at least that many copies. The list is the 40 best-scoring main slots, the 10 best sideboard slots (never more than 3 total copies of a card across both) and the 3 best battlefields. The three cells on each row are the shares for the 1st, 2nd and 3rd copy. Filled cells are <b>locked</b> (two thirds of lists or more); outlined cells are <b>flex</b> slots that made the cut anyway. <b>Flex choices</b> below the list pairs the weakest slots in the list with the next cards in line, so you can see exactly which swaps the field is split on.</p>
+  <p class="v-build"><b>Reading the generic list.</b> Main deck and sideboard are treated as one 50-card pool. Every copy of every card is a slot, scored by the share of lists that ran at least that many copies across main + sideboard (over lists that posted a sideboard). The 50 best slots make the pool, then the 40 that most often sat in the main deck become the main deck and the other 10 the sideboard. The three cells on each row are the pool shares for the 1st, 2nd and 3rd copy: filled = <b>locked</b> (two thirds or more), outlined = <b>flex</b>, dotted = a copy this list keeps in the sideboard. Hover a cell for the main / side split.</p>
+  <p class="v-build"><b>Adjusting the list.</b> Use <b>−</b> to drop a copy, <b>▾S</b> / <b>▴M</b> to move one between main and sideboard, and <b>+M</b> / <b>+S</b> on the "next in line" rows or the add box to bring a card in. Counts turn red when the list is off 40 / 10 / 3. Edits are kept per legend in this browser until you press Reset.</p>
   <p><b>Click any row</b> for the copy split: how many lists ran it at 3, 2 or 1 copies or not at all, their share, and the average placing of each group. Average placing mixes big cuts (1–64) with smaller events where every list is a top 4, so read it as a hint, not a ranking.</p>
 </div>
 <div class="ctlbar" role="group" aria-label="Controls">
@@ -171,6 +186,8 @@ const GROUPS = [['champion','Champion'],['unit','Units'],['spell','Spells'],['ge
 
 // ---------- state ----------
 const state = {mode:'sheet', view:'separate', src:'all', place:0};
+let EDITS = {}; try{ EDITS = JSON.parse(localStorage.getItem('flex-edits')||'{}') || {}; }catch(e){}
+const saveEdits = () => { try{ localStorage.setItem('flex-edits', JSON.stringify(EDITS)); }catch(e){} };
 try{ const s = JSON.parse(localStorage.getItem('flex-state')||'{}'); for(const k of Object.keys(state)) if(s[k]!==undefined) state[k]=s[k]; if(localStorage.getItem('flex-view')==='combined' && !s.view) state.view='combined'; }catch(e){}
 const FD = {}; // filtered decks per legend, refreshed on render
 
@@ -208,7 +225,7 @@ function detail(decks, kind, card){
     const g = byQ.get(q), avg = g.reduce((a,x)=>a+x.rank,0)/g.length, z = q ? '' : ' z';
     return `<span class="q${z}">${q ? q+'×' : 'none'}</span><span class="${z.trim()}">${g.length}</span><span class="${z.trim()}">${pct(g.length/total)}%</span><span class="${z.trim()}">${avg.toFixed(1)}</span>`;
   }).join('');
-  return `<tr class="detail"><td colspan="4"><div class="split"><span class="h q">copies</span><span class="h">${unit}</span><span class="h">share</span><span class="h">avg place</span>${rows}</div></td></tr>`;
+  return `<tr class="detail"><td colspan="6"><div class="split"><span class="h q">copies</span><span class="h">${unit}</span><span class="h">share</span><span class="h">avg place</span>${rows}</div></td></tr>`;
 }
 function toggle(tr){
   const open = tr.getAttribute('aria-expanded')==='true';
@@ -220,9 +237,13 @@ function toggle(tr){
   tr.insertAdjacentHTML('afterend', detail(FD[leg], tr.dataset.k, tr.dataset.c));
 }
 main.addEventListener('click', e=>{
-  if(e.target.closest('a')) return;
+  if(e.target.closest('a') || e.target.closest('input')) return;
+  const op = e.target.closest('button[data-op]'); if(op){ applyOp(op); return; }
   const btn = e.target.closest('button.copy'); if(btn){ copyList(btn); return; }
   const tr = e.target.closest('tr.card'); if(tr) toggle(tr);
+});
+main.addEventListener('keydown', e=>{
+  if(e.key==='Enter' && e.target.matches('.addrow input')){ e.preventDefault(); const b=e.target.parentElement.querySelector('button[data-op="add-m"]'); if(b) applyOp(b); }
 });
 main.addEventListener('keydown', e=>{ if(e.key!=='Enter' && e.key!==' ') return; const tr = e.target.closest('tr.card'); if(tr){ e.preventDefault(); toggle(tr); } });
 
@@ -234,7 +255,7 @@ function slots(decks, kind){
   const out=[];
   for(const [c,arr] of per){
     const maxq = Math.max(...arr.map(a=>a[0]));
-    for(let k=1;k<=maxq;k++){ const g=arr.filter(a=>a[0]>=k); out.push({card:c,k,n:g.length,rate:g.length/n,avg:g.reduce((s,a)=>s+a[1],0)/g.length}); }
+    for(let k=1;k<=maxq;k++){ const g=arr.filter(a=>a[0]>=k); out.push({card:c,k,n:g.length,rate:n?g.length/n:0,avg:g.reduce((s,a)=>s+a[1],0)/g.length}); }
   }
   return out.sort((a,b)=> b.rate-a.rate || a.avg-b.avg || a.k-b.k || a.card.localeCompare(b.card));
 }
@@ -251,97 +272,171 @@ function pick(list, size, allow, seed){
   }
   return {chosen, cnt};
 }
-function rateCells(byCard, card, cnt){
+const key = (c,k) => c+'|'+k;
+// one 50-card pool over main + sideboard, then the 40 copies that most often sat in the main deck
+function computeGeneric(leg, decks){
+  const sbs = decks.filter(x=>x.sb), poolDecks = sbs.length>=3 ? sbs : decks;
+  const PS = slots(poolDecks,'comb'), PB = new Map(PS.map(s=>[key(s.card,s.k), s]));
+  const MS = slots(decks,'main'), MB = new Map(MS.map(s=>[key(s.card,s.k), s]));
+  const SS = slots(sbs.length?sbs:decks,'side'), SB = new Map(SS.map(s=>[key(s.card,s.k), s]));
+  const champSlot = PS.find(s => s.k===1 && ownChamp(leg, s.card));
+  const pool = pick(PS, 50, null, champSlot);
+  const cand = pool.chosen.map(s=>{ const m=MB.get(key(s.card,s.k)); return {...s, mrate:m?m.rate:0, mavg:m?m.avg:99}; })
+    .sort((a,b)=> b.mrate-a.mrate || a.mavg-b.mavg || b.rate-a.rate || a.k-b.k || a.card.localeCompare(b.card));
+  const main={}, side={}; let nm=0;
+  if(champSlot){ main[champSlot.card]=1; nm=1; }
+  for(const s of cand){
+    if(champSlot && s.card===champSlot.card && s.k===1) continue;
+    if(nm<40 && (main[s.card]||0)===s.k-1){ main[s.card]=s.k; nm++; }
+    else side[s.card]=(side[s.card]||0)+1;
+  }
+  const BS = slots(decks,'bf'), BB = new Map(BS.map(s=>[key(s.card,1), s]));
+  const bf = pick(BS, 3).cnt;
+  const splits = new Map();
+  for(const x of decks){ const k = Object.entries(x.r).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).map(([r,v])=>`${v} ${r.replace(' Rune','')}`).join(' / '); splits.set(k,(splits.get(k)||0)+1); }
+  return {PS, PB, MB, SB, BS, BB, main, side, bf, poolN: poolDecks.length, sbN: sbs.length, splits:[...splits.entries()].sort((a,b)=>b[1]-a[1])};
+}
+const clone = o => JSON.parse(JSON.stringify(o));
+function current(leg, G){ return EDITS[leg] ? EDITS[leg] : {main:clone(G.main), side:clone(G.side), bf:clone(G.bf)}; }
+const sum = o => Object.values(o).reduce((a,b)=>a+b,0);
+function cellTitle(G, c, k){
+  const pcs = G.PB.get(key(c,k)), m = G.MB.get(key(c,k)), sd = G.SB.get(key(c,k));
+  return `${ORDN[k]} copy: ${pcs?pct(pcs.rate):0}% of pool lists (main ${m?pct(m.rate):0}% · side ${sd?pct(sd.rate):0}%)`;
+}
+function rateCells(G, c, mainCnt, combCnt){
   let out='';
   for(let k=1;k<=3;k++){
-    const s = byCard.get(card+'|'+k);
+    const s = G.PB.get(key(c,k));
     if(!s){ out += `<b class="na">·</b>`; continue; }
-    const cls = k<=cnt ? (s.rate>=LOCK ? 'hi' : 'lo') : 'mid';
-    out += `<b class="${cls}" title="${k}${ORDN[k].slice(1)} copy: ${s.n} lists, ${pct(s.rate)}%">${pct(s.rate)}</b>`;
+    const cls = k<=mainCnt ? (s.rate>=LOCK ? 'hi' : 'lo') : k<=combCnt ? 'sb' : 'mid';
+    out += `<b class="${cls}" title="${esc(cellTitle(G,c,k))}">${pct(s.rate)}</b>`;
   }
   return out;
 }
-function listTable(chosen, cnt, byCard, kind, grouped, leg){
-  const cards = Object.keys(cnt).filter(c=>cnt[c]>0);
-  const rows = (arr) => arr.sort((a,b)=> cnt[b]-cnt[a] || a.localeCompare(b)).map(c=>{
-    const flex = chosen.some(s=>s.card===c && s.rate<LOCK);
+const opBtn = (op, c, label, title, dis) => `<button type="button" data-op="${op}" data-c="${esc(c)}" title="${title}"${dis?' disabled':''}>${label}</button>`;
+function listRows(G, cur, cards, where, leg){
+  const cnt = where==='main' ? cur.main : cur.side;
+  return cards.sort((a,b)=> cnt[b]-cnt[a] || a.localeCompare(b)).map(c=>{
+    const mc = cur.main[c]||0, sc = cur.side[c]||0, comb = mc+sc;
+    const flex = [...Array(comb)].some((_,i)=>{ const s=G.PB.get(key(c,i+1)); return !s || s.rate<LOCK; });
     const ch = isChampCard(c) ? ' champ' : '';
-    return `<tr class="card" tabindex="0" role="button" aria-expanded="false" data-k="${kind}" data-c="${esc(c)}"><td class="n v${cnt[c]}">${cnt[c]}</td><td class="name${ch}">${esc(c)}${flex?'<i class="tag">flex</i>':''}</td><td class="rates">${rateCells(byCard,c,cnt[c])}</td></tr>`;
+    const ops = where==='main'
+      ? opBtn('m-',c,'−','drop one from main') + opBtn('m2s',c,'▾S','move one to sideboard')
+      : opBtn('s-',c,'−','drop one from sideboard') + opBtn('s2m',c,'▴M','move one to main');
+    return `<tr class="card" tabindex="0" role="button" aria-expanded="false" data-k="${where}" data-c="${esc(c)}"><td class="n v${cnt[c]}">${cnt[c]}</td><td class="name${ch}">${esc(c)}${flex?'<i class="tag">flex</i>':''}</td><td class="rates">${rateCells(G,c,mc,comb)}</td><td class="ops">${ops}</td></tr>`;
   }).join('');
-  if(!grouped) return `<table>${rows(cards)}</table>`;
+}
+function mainTable(G, cur, leg){
+  const cards = Object.keys(cur.main).filter(c=>cur.main[c]>0);
   let out='';
   for(const [g,label] of GROUPS){
     const arr = cards.filter(c=>groupOf(c,leg)===g); if(!arr.length) continue;
-    const copies = arr.reduce((s,c)=>s+cnt[c],0);
-    out += `<h4>${label} <span class="meta">${copies}</span></h4><table>${rows(arr)}</table>`;
+    out += `<h4>${label} <span class="meta">${arr.reduce((s,c)=>s+cur.main[c],0)}</span></h4><table>${listRows(G,cur,arr,'main',leg)}</table>`;
   }
-  return out;
+  return out || '<p class="miss" style="padding:6px 0 0">Empty.</p>';
 }
-function flexRows(where, kind, chosen, cnt, all, allow){
-  const weak = chosen.filter(s=>s.rate<LOCK).sort((a,b)=>a.rate-b.rate).map(s=>({where,kind,...s,dir:'out'}));
-  const next = all.filter(s => s.k===(cnt[s.card]||0)+1 && s.rate>=ALT && (!allow || allow(s))).map(s=>({where,kind,...s,dir:'in'}));
-  return {weak, next};
+function sideTable(G, cur, leg){
+  const cards = Object.keys(cur.side).filter(c=>cur.side[c]>0);
+  return cards.length ? `<table>${listRows(G,cur,cards,'side',leg)}</table>` : '<p class="miss" style="padding:6px 0 0">Empty.</p>';
 }
-const ftr = r => `<tr class="card" tabindex="0" role="button" aria-expanded="false" data-k="${r.kind}" data-c="${esc(r.card)}"><td class="w">${r.where}</td><td class="name">${esc(r.card)}</td><td class="k">${ORDN[r.k]||r.k+'th'} copy</td><td class="r">${pct(r.rate)}%</td><td class="a">${r.avg.toFixed(1)}</td></tr>`;
+function bfTable(G, cur){
+  const cards = Object.keys(cur.bf).filter(c=>cur.bf[c]>0).sort((a,b)=>{ const ra=(G.BB.get(key(a,1))||{rate:0}).rate, rb=(G.BB.get(key(b,1))||{rate:0}).rate; return rb-ra || a.localeCompare(b); });
+  return `<table>${cards.map(c=>{ const s=G.BB.get(key(c,1)), r=s?s.rate:0; return `<tr class="card" tabindex="0" role="button" aria-expanded="false" data-k="bf" data-c="${esc(c)}"><td class="n v1">1</td><td class="name">${esc(c)}${r<LOCK?'<i class="tag">flex</i>':''}</td><td class="rates"><b class="${r>=LOCK?'hi':'lo'}" title="${s?s.n:0} lists">${pct(r)}</b></td><td class="ops">${opBtn('bf-',c,'−','drop this battlefield')}</td></tr>`; }).join('')}</table>`;
+}
+const ftr = (r, ops) => `<tr class="card" tabindex="0" role="button" aria-expanded="false" data-k="${r.kind}" data-c="${esc(r.card)}"><td class="w">${r.where}</td><td class="name">${esc(r.card)}</td><td class="k">${r.kind==='bf'?'':(ORDN[r.k]||r.k+'th')+' copy'}</td><td class="r">${pct(r.rate)}%</td><td class="a">${r.avg.toFixed(1)}</td><td class="ops">${ops}</td></tr>`;
+function flexTables(G, cur){
+  const weak=[], next=[];
+  const cards = new Set([...Object.keys(cur.main),...Object.keys(cur.side)]);
+  for(const c of cards){
+    const mc=cur.main[c]||0, sc=cur.side[c]||0, comb=mc+sc; if(!comb) continue;
+    for(let k=1;k<=comb;k++){ const s=G.PB.get(key(c,k)) || {card:c,k,rate:0,avg:0,n:0}; if(s.rate<LOCK) weak.push({...s, kind:'comb', where: k<=mc?'main':'side'}); }
+  }
+  weak.sort((a,b)=>a.rate-b.rate || a.card.localeCompare(b.card));
+  for(const s of G.PS){ const comb=(cur.main[s.card]||0)+(cur.side[s.card]||0); if(s.k===comb+1 && comb<3 && s.rate>=ALT) next.push({...s, kind:'comb', where:'pool'}); }
+  next.sort((a,b)=>b.rate-a.rate || a.avg-b.avg);
+  for(const c of Object.keys(cur.bf)) if(cur.bf[c]>0){ const s=G.BB.get(key(c,1))||{card:c,k:1,rate:0,avg:0}; if(s.rate<LOCK) weak.push({...s, kind:'bf', where:'bf'}); }
+  const bfNext = G.BS.filter(s=>!cur.bf[s.card] && s.rate>=ALT).map(s=>({...s, kind:'bf', where:'bf'}));
+  const weakH = weak.map(r=> ftr(r, r.kind==='bf' ? opBtn('bf-',r.card,'−','drop this battlefield') : opBtn(r.where==='main'?'m-':'s-', r.card, '−', `drop one from ${r.where}`))).join('');
+  const nextH = next.slice(0,ALT_MAX).map(r=> ftr(r, opBtn('m+',r.card,'+M','add one to main') + opBtn('s+',r.card,'+S','add one to sideboard'))).join('')
+              + bfNext.map(r=> ftr(r, opBtn('bf+',r.card,'+','add this battlefield'))).join('');
+  return {weakH, nextH};
+}
 function buildSection(leg, decks){
-  const d = P.data[leg], info = P.legends[leg], n = decks.length, sbs = decks.filter(x=>x.sb);
-  const M = slots(decks,'main'), Mby = new Map(M.map(s=>[s.card+'|'+s.k, s]));
-  const champSlot = M.find(s => s.k===1 && ownChamp(leg, s.card));
-  const pm = pick(M, 40, null, champSlot);
-  const S = slots(sbs,'side'), Sby = new Map(S.map(s=>[s.card+'|'+s.k, s]));
-  const sideOk = s => (pm.cnt[s.card]||0) + s.k <= 3;
-  const ps = sbs.length ? pick(S, 10, sideOk) : {chosen:[],cnt:{}};
-  const B = slots(decks,'bf'), Bby = new Map(B.map(s=>[s.card+'|'+s.k, s]));
-  const pb = pick(B, 3);
-  // runes: most common exact split
-  const splits = new Map();
-  for(const x of decks){ const key = Object.entries(x.r).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).map(([k,v])=>`${v} ${k.replace(' Rune','')}`).join(' / '); splits.set(key,(splits.get(key)||0)+1); }
-  const splitList = [...splits.entries()].sort((a,b)=>b[1]-a[1]);
-  const mainCopies = pm.chosen.length, sideCopies = ps.chosen.length;
-  const fm = flexRows('main','main',pm.chosen,pm.cnt,M), fs = flexRows('side','side',ps.chosen,ps.cnt,S,sideOk), fb = flexRows('bf','bf',pb.chosen,pb.cnt,B);
-  const weak = [...fm.weak,...fs.weak,...fb.weak].sort((a,b)=>a.rate-b.rate);
-  const next = [...fm.next,...fs.next,...fb.next].sort((a,b)=>b.rate-a.rate).slice(0,ALT_MAX);
-  const split = eventSplit(decks);
+  const d = P.data[leg], info = P.legends[leg], n = decks.length;
+  const G = computeGeneric(leg, decks), cur = current(leg, G), edited = !!EDITS[leg];
+  const nm = sum(cur.main), ns = sum(cur.side), nb = sum(cur.bf);
+  const st = (v,t) => `<span class="${v===t?'ok':'bad'}">${v}/${t}</span>`;
+  const {weakH, nextH} = flexTables(G, cur);
   const doms = (info.domains||'').split('/').filter(Boolean).map(k=>`<span class="chip dom" style="--rc:${DOM[k]||'var(--ink3)'}">${k}</span>`).join('');
-  const runeChip = splitList.length ? `<span class="chip"><b>Runes</b> ${esc(splitList[0][0])} <span class="meta">${splitList[0][1]}/${n} lists</span></span>` : '';
-  const others = splitList.slice(1,4).map(([k,v])=>`${esc(k)} ×${v}`).join(' · ');
-  const bfRows = pb.chosen.map(s=>`<tr class="card" tabindex="0" role="button" aria-expanded="false" data-k="bf" data-c="${esc(s.card)}"><td class="n v1">1</td><td class="name">${esc(s.card)}${s.rate<LOCK?'<i class="tag">flex</i>':''}</td><td class="rates"><b class="${s.rate>=LOCK?'hi':'lo'}">${pct(s.rate)}</b></td></tr>`).join('');
-  const text = listText(leg, info, pm, ps, pb, splitList[0]);
+  const top = G.splits[0], others = G.splits.slice(1,4).map(([k,v])=>`${esc(k)} ×${v}`).join(' · ');
+  const text = listText(leg, info, cur, top);
+  const poolCards = G.PS.filter(s=>s.k===1).map(s=>s.card).filter(c=>((cur.main[c]||0)+(cur.side[c]||0))<3).sort();
+  const dl = `dl-${slug(leg)}`;
   return `<section class="legend v-build" id="${slug(leg)}" data-leg="${esc(leg)}">
-    <div class="lhead"><h2>${esc(leg)}</h2><span class="cnt">generic list from ${n} list${n>1?'s':''}${split?` (${split})`:''} · ${sbs.length} with sideboards</span><button type="button" class="copy" data-text="${esc(text)}">Copy list</button></div>
-    <div class="chips"><span class="chip"><b>${esc(info.full)}</b> legend</span>${doms}${runeChip}</div>
+    <div class="lhead"><h2>${esc(leg)}</h2><span class="cnt">from ${n} list${n>1?'s':''} (${eventSplit(decks)}) · pool over ${G.poolN} with sideboards · main ${st(nm,40)} · side ${st(ns,10)} · battlefields ${st(nb,3)}${edited?' <i class="tag edit">edited</i>':''}</span>${edited?`<button type="button" class="reset" data-op="reset">Reset</button>`:''}<button type="button" class="copy" data-text="${esc(text)}"${edited?'':' style="margin-left:auto"'}>Copy list</button></div>
+    <div class="chips"><span class="chip"><b>${esc(info.full)}</b> legend</span>${doms}${top?`<span class="chip"><b>Runes</b> ${esc(top[0])} <span class="meta">${top[1]}/${n} lists</span></span>`:''}</div>
     ${n<3?`<div class="note" style="margin-top:10px">Only ${n} list${n>1?'s':''} in this sample, so the "generic" list is close to a copy of ${n>1?'them':'it'}.</div>`:''}
     <div class="bcols">
-      <div><h3>Main deck <span>${mainCopies} cards · share running 1st · 2nd · 3rd copy</span></h3>${listTable(pm.chosen,pm.cnt,Mby,'main',true,leg)}</div>
+      <div><h3>Main deck <span>pool share of 1st · 2nd · 3rd copy</span></h3>${mainTable(G,cur,leg)}</div>
       <div>
-        <h3>Sideboard <span>${sideCopies} cards · of ${sbs.length} sideboards</span></h3>${sbs.length?listTable(ps.chosen,ps.cnt,Sby,'side',false,leg):'<p class="miss" style="padding:0">No sideboards in this sample.</p>'}
-        <h3 style="margin-top:14px">Battlefields <span>share running it</span></h3><table>${bfRows}</table>
+        <h3>Sideboard <span>${G.sbN} of ${n} lists posted one</span></h3>${sideTable(G,cur,leg)}
+        <h3 style="margin-top:14px">Battlefields <span>share running it</span></h3>${bfTable(G,cur)}
         <h3 style="margin-top:14px">Runes <span>most common split</span></h3>
-        <div class="chips" style="padding:0">${splitList.length?`<span class="chip rune" style="--rc:var(--accent)"><b>${esc(splitList[0][0])}</b> ${splitList[0][1]}/${n}</span>`:''}</div>
+        <div class="chips" style="padding:0">${top?`<span class="chip rune" style="--rc:var(--accent)"><b>${esc(top[0])}</b> ${top[1]}/${n}</span>`:''}</div>
         ${others?`<div class="rsplits">also seen: ${others}</div>`:''}
       </div>
     </div>
     <div class="flexbox"><h3>Flex choices <span>weakest slots in the list vs. next in line · click a row for its copy split</span></h3>
       <div class="fcols">
-        <div><h4>Cut first (in the list, under ${pct(LOCK)}%)</h4>${weak.length?`<table class="ftab">${weak.map(ftr).join('')}</table>`:'<p class="miss" style="padding:6px 0 0">Every slot is locked.</p>'}</div>
-        <div><h4>Next in line (not in the list, ${pct(ALT)}%+)</h4>${next.length?`<table class="ftab">${next.map(ftr).join('')}</table>`:'<p class="miss" style="padding:6px 0 0">Nothing else reached '+pct(ALT)+'%.</p>'}</div>
+        <div><h4>Cut first (in the list, under ${pct(LOCK)}% of the pool)</h4>${weakH?`<table class="ftab">${weakH}</table>`:'<p class="miss" style="padding:6px 0 0">Every slot is locked.</p>'}</div>
+        <div><h4>Next in line (not in the list, ${pct(ALT)}%+)</h4>${nextH?`<table class="ftab">${nextH}</table>`:'<p class="miss" style="padding:6px 0 0">Nothing else reached '+pct(ALT)+'%.</p>'}
+          <div class="addrow"><input list="${dl}" placeholder="add any card seen for ${esc(leg)}…" aria-label="card to add"><datalist id="${dl}">${poolCards.map(c=>`<option value="${esc(c)}">`).join('')}</datalist>${opBtn('add-m','','+M','add to main')}${opBtn('add-s','','+S','add to sideboard')}</div>
+        </div>
       </div>
     </div>
     ${deckLinks(decks, d.missing)}
   </section>`;
 }
-function listText(leg, info, pm, ps, pb, runeSplit){
+function applyOp(btn){
+  const sec = btn.closest('section.legend'), leg = sec.dataset.leg, op = btn.dataset.op;
+  const G = computeGeneric(leg, FD[leg]);
+  if(op==='reset'){ delete EDITS[leg]; saveEdits(); rerender(sec, leg); return; }
+  const cur = clone(current(leg, G));
+  let c = btn.dataset.c;
+  if(op==='add-m' || op==='add-s'){ const inp = btn.parentElement.querySelector('input'); c = (inp.value||'').trim(); const hit = G.PS.find(s=>s.card.toLowerCase()===c.toLowerCase()); if(!hit){ inp.setCustomValidity('not a card seen for this legend'); inp.reportValidity(); setTimeout(()=>inp.setCustomValidity(''),1500); return; } c = hit.card; }
+  const tot = () => (cur.main[c]||0)+(cur.side[c]||0);
+  const dec = (o) => { if(o[c]>1) o[c]--; else delete o[c]; };
+  switch(op){
+    case 'm-': if(cur.main[c]) dec(cur.main); break;
+    case 's-': if(cur.side[c]) dec(cur.side); break;
+    case 'm2s': if(cur.main[c]){ dec(cur.main); cur.side[c]=(cur.side[c]||0)+1; } break;
+    case 's2m': if(cur.side[c]){ dec(cur.side); cur.main[c]=(cur.main[c]||0)+1; } break;
+    case 'm+': case 'add-m': if(tot()<3) cur.main[c]=(cur.main[c]||0)+1; break;
+    case 's+': case 'add-s': if(tot()<3) cur.side[c]=(cur.side[c]||0)+1; break;
+    case 'bf-': delete cur.bf[c]; break;
+    case 'bf+': cur.bf[c]=1; break;
+  }
+  EDITS[leg] = cur; saveEdits(); rerender(sec, leg);
+}
+function rerender(sec, leg){
+  const y = window.scrollY, tmp = document.createElement('div');
+  tmp.innerHTML = buildSection(leg, FD[leg]);
+  sec.replaceWith(tmp.firstElementChild);
+  window.scrollTo(0, y);
+}
+function listText(leg, info, cur, runeSplit){
   const lines = [`// ${leg} generic list — https://shizukaziye.github.io/riftbound-flex-sheet/#${slug(leg)}`, `Legend: ${info.full}`];
   for(const [g,label] of GROUPS){
-    const arr = Object.keys(pm.cnt).filter(c=>pm.cnt[c]>0 && groupOf(c,leg)===g).sort((a,b)=>pm.cnt[b]-pm.cnt[a]||a.localeCompare(b));
+    const arr = Object.keys(cur.main).filter(c=>cur.main[c]>0 && groupOf(c,leg)===g).sort((a,b)=>cur.main[b]-cur.main[a]||a.localeCompare(b));
     if(!arr.length) continue;
-    lines.push('', `${label} (${arr.reduce((s,c)=>s+pm.cnt[c],0)})`);
-    for(const c of arr) lines.push(`${pm.cnt[c]} ${c}`);
+    lines.push('', `${label} (${arr.reduce((s,c)=>s+cur.main[c],0)})`);
+    for(const c of arr) lines.push(`${cur.main[c]} ${c}`);
   }
-  lines.push('', `Battlefields (${pb.chosen.length})`); for(const s of pb.chosen) lines.push(`1 ${s.card}`);
+  const bfs = Object.keys(cur.bf).filter(c=>cur.bf[c]>0);
+  lines.push('', `Battlefields (${bfs.length})`); for(const c of bfs) lines.push(`1 ${c}`);
   if(runeSplit) lines.push('', `Runes (12)`, ...runeSplit[0].split(' / ').map(p=>{ const [q,...rest]=p.split(' '); return `${q} ${rest.join(' ')} Rune`; }));
-  const sc = Object.keys(ps.cnt).filter(c=>ps.cnt[c]>0).sort((a,b)=>ps.cnt[b]-ps.cnt[a]||a.localeCompare(b));
-  if(sc.length){ lines.push('', `Sideboard (${sc.reduce((s,c)=>s+ps.cnt[c],0)})`); for(const c of sc) lines.push(`${ps.cnt[c]} ${c}`); }
+  const sc = Object.keys(cur.side).filter(c=>cur.side[c]>0).sort((a,b)=>cur.side[b]-cur.side[a]||a.localeCompare(b));
+  if(sc.length){ lines.push('', `Sideboard (${sc.reduce((s,c)=>s+cur.side[c],0)})`); for(const c of sc) lines.push(`${cur.side[c]} ${c}`); }
   return lines.join('\n');
 }
 async function copyList(btn){
