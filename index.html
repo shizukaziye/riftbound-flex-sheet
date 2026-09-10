@@ -30,16 +30,18 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Source Sans 3","Segoe UI",system-ui,sans-serif;font-size:15px;line-height:1.45}
 a{color:var(--accent)}
-.wrap{max-width:1180px;margin:0 auto;padding:28px 24px 80px}
+.wrap{max-width:1340px;margin:0 auto;padding:28px 24px 80px}
 header.top{display:flex;flex-wrap:wrap;gap:12px 32px;align-items:flex-end;border-bottom:2px solid var(--ink);padding-bottom:16px;margin-bottom:8px}
 h1{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;font-size:44px;line-height:1;margin:0;letter-spacing:.01em;text-wrap:balance}
 .sub{color:var(--ink2);max-width:62ch;margin:0}
 .meta{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12px;color:var(--ink3);letter-spacing:.02em}
 .how{background:var(--panel);border:1px solid var(--line);padding:14px 18px;margin:18px 0 22px;max-width:78ch}
 .how p{margin:0 0 6px}.how p:last-child{margin:0}
-.layout{display:grid;grid-template-columns:200px 1fr;gap:28px;align-items:start}
+.layout{display:grid;grid-template-columns:176px 1fr;gap:24px;align-items:start}
+.layout>*{min-width:0}
+.cols>div,.bcols>div,.fcols>div{min-width:0;overflow-x:auto}
 nav{position:sticky;top:calc(var(--loseii-nav-offset,0px) + 16px);display:flex;flex-direction:column;gap:2px}
-nav a{display:flex;justify-content:space-between;align-items:baseline;text-decoration:none;color:var(--ink);padding:7px 10px;border-left:3px solid transparent;font-family:"Barlow Condensed",sans-serif;font-size:19px;font-weight:600}
+nav a{display:flex;justify-content:space-between;align-items:baseline;gap:6px;text-decoration:none;color:var(--ink);padding:6px 9px;border-left:3px solid transparent;font-family:"Barlow Condensed",sans-serif;font-size:18px;font-weight:600}
 nav a:hover,nav a:focus-visible{border-left-color:var(--accent);background:var(--panel);outline:none}
 nav a small{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink3)}
 nav a.empty{opacity:.45}
@@ -53,7 +55,8 @@ nav a.empty{opacity:.45}
 .chip.rune{border-left:4px solid var(--rc)}
 .chip.dom{border-left:4px solid var(--rc)}
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:0 24px;padding:14px 20px 18px}
-@media (max-width:760px){.layout{grid-template-columns:1fr}nav{position:static;flex-direction:row;flex-wrap:wrap}.cols,.bcols,.fcols{grid-template-columns:1fr}}
+@media (max-width:760px){.layout{grid-template-columns:1fr}nav{position:static;flex-direction:row;flex-wrap:wrap;gap:2px 4px}nav a{font-size:15px;padding:3px 7px;border-left-width:2px}nav a small{font-size:10px}.cols,.bcols,.fcols{grid-template-columns:1fr}h1{font-size:36px}.lhead h2{font-size:26px}}
+@media (max-width:1000px){.fcols{grid-template-columns:1fr}}
 h3{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);margin:8px 0 6px;display:flex;justify-content:space-between;align-items:baseline}
 h3 span{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:0;text-transform:none;color:var(--ink3);font-weight:500}
 h4{font-family:"Barlow Condensed",sans-serif;font-size:13.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin:12px 0 2px}
@@ -78,8 +81,8 @@ tr.core td.name::after{content:"core";font-family:"JetBrains Mono",monospace;fon
 .note{background:var(--hi);color:var(--hi-ink);padding:8px 12px;font-size:13px;margin:0 20px 12px}
 footer{margin-top:30px;color:var(--ink3);font-size:13px;max-width:78ch}
 .ctlbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;margin:0 0 18px}
-.ctl{display:flex;align-items:center;gap:8px}
-.seg{display:inline-flex;border:1px solid var(--line);background:var(--panel);border-radius:4px;overflow:hidden}
+.ctl{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);background:var(--panel);border-radius:4px;overflow:hidden}
 .seg button{appearance:none;border:0;background:transparent;color:var(--ink2);font:inherit;font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:16px;padding:5px 12px;cursor:pointer;white-space:nowrap}
 .seg button+button{border-left:1px solid var(--line)}
 .seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
@@ -109,7 +112,7 @@ body[data-mode="sheet"] .v-buy,body[data-mode="build"] .v-buy{display:none}
 .buyctl .sum{margin-left:auto;font-family:"JetBrains Mono",monospace;font-size:12.5px;color:var(--ink2)}
 .buyctl .sum b{color:var(--ink);font-weight:500}
 .buywrap{overflow-x:auto;padding:0 20px 16px}
-table.buy th{position:sticky;top:calc(var(--loseii-nav-offset,0px));background:var(--panel);z-index:1;font-family:"Barlow Condensed",sans-serif;font-size:12.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);text-align:left;padding:6px 6px;border-bottom:2px solid var(--line);white-space:nowrap;cursor:pointer;user-select:none}
+table.buy th{background:var(--panel);font-family:"Barlow Condensed",sans-serif;font-size:12.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);text-align:left;padding:6px 6px;border-bottom:2px solid var(--line);white-space:nowrap;cursor:pointer;user-select:none}
 table.buy th.r{text-align:right} table.buy th.d{text-align:center;color:var(--ink3);min-width:38px}
 table.buy th[aria-sort]{color:var(--accent)}
 table.buy td{white-space:nowrap}
@@ -143,10 +146,10 @@ tr.detail+tr.grp td{border-top-width:2px}
 .split .q{text-align:left;color:var(--accent)}
 .split .z{opacity:.6}
 /* build mode */
-.bcols{display:grid;grid-template-columns:1.15fr 1fr;gap:0 24px;padding:6px 20px 18px}
+.bcols{display:grid;grid-template-columns:1.25fr 1fr;gap:0 24px;padding:6px 20px 18px}
 .bcols table{margin-bottom:4px}
-td.rates{width:100px;text-align:right;white-space:nowrap;padding-right:0}
-td.rates b{display:inline-block;width:29px;font-family:"JetBrains Mono",monospace;font-weight:500;font-size:10.5px;text-align:center;border-radius:2px;padding:1px 0;margin-left:2px;line-height:1.5}
+td.rates{width:92px;text-align:right;white-space:nowrap;padding-right:0}
+td.rates b{display:inline-block;width:27px;font-family:"JetBrains Mono",monospace;font-weight:500;font-size:10.5px;text-align:center;border-radius:2px;padding:1px 0;margin-left:2px;line-height:1.5}
 td.rates b.hi{background:var(--bar-full);color:var(--accent-ink)}
 td.rates b.mid{background:var(--bar);color:var(--ink)}
 td.rates b.lo{background:transparent;color:var(--ink3);box-shadow:inset 0 0 0 1px var(--line)}
@@ -154,8 +157,10 @@ td.rates b.na{color:transparent}
 .tag{font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.06em;color:var(--hi-ink);background:var(--hi);padding:1px 5px;border-radius:2px;margin-left:8px;vertical-align:middle;font-style:normal;font-weight:500}
 .flexbox{padding:4px 20px 16px;border-top:1px solid var(--line)}
 .fcols{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
-.ftab td.w{width:40px;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.04em;color:var(--ink3);text-transform:uppercase}
-.ftab td.k{width:64px;font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--ink3);white-space:nowrap}
+.ftab td.w{display:none}
+.ftab td.k{width:38px;font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink3);white-space:nowrap;text-align:right}
+.ftab .wh{font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3);border:1px solid var(--line);border-radius:2px;padding:0 4px;margin-right:6px;vertical-align:middle}
+.ftab .wh.main{color:var(--accent);border-color:var(--accent)}
 .ftab td.r{width:48px;text-align:right;font-family:"JetBrains Mono",monospace;font-size:12px}
 .ftab td.a{width:64px;text-align:right;font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--ink3)}
 .ftab td.name{padding-left:0}
@@ -170,15 +175,21 @@ details.events table{max-width:760px;font-size:12.5px}
 details.events td{padding:2px 8px 2px 0;white-space:nowrap}
 details.events td.r{text-align:right;font-family:"JetBrains Mono",monospace;font-size:11.5px}
 td.rates b.sb{background:transparent;color:var(--ink2);box-shadow:inset 0 0 0 1px var(--ink3);border-style:dotted}
-td.ops{width:84px;padding:0 0 0 6px;white-space:nowrap;text-align:right}
-.bcols td.a{width:44px;text-align:right;font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--ink3);padding-right:0}
-td.price{width:58px;text-align:right;font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--ink2);white-space:nowrap}
+td.ops{width:74px;padding:0 0 0 4px;white-space:nowrap;text-align:right}
+.bcols td.a{width:38px;text-align:right;font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--ink3);padding-right:0}
+td.price{width:54px;text-align:right;font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--ink2);white-space:nowrap}
 td.price a{color:inherit;text-decoration:none;border-bottom:1px dotted var(--line)}
 td.price a:hover{color:var(--accent);border-bottom-color:var(--accent)}
 td.price.hi{color:var(--fury)}
 .cnt .cost{font-weight:600;color:var(--ink)}
+.stats{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;padding:10px 20px 0}
+.stat{font-family:"JetBrains Mono",monospace;font-size:11.5px;padding:3px 8px;border:1px solid var(--line);border-radius:3px;color:var(--ink2);background:var(--bg);white-space:nowrap}
+.stat b{font-weight:500;color:var(--ink)}
+.stat.ok b{color:var(--calm)} .stat.bad{border-color:var(--fury)} .stat.bad b{color:var(--fury)}
+.stat.cost b{font-size:12.5px}
+.stats .hbtns{margin-left:auto}
 .bcols td.a.good{color:var(--calm)} .bcols td.a.poor{color:var(--fury)}
-td.ops button,.addrow button,button.reset{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink2);font-family:"JetBrains Mono",monospace;font-size:10.5px;font-weight:500;line-height:1;padding:3px 5px;border-radius:3px;cursor:pointer;margin-left:3px}
+td.ops button,.addrow button,button.reset{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink2);font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:500;line-height:1;padding:3px 4px;border-radius:3px;cursor:pointer;margin-left:2px}
 td.ops button:hover,.addrow button:hover,button.reset:hover{border-color:var(--accent);color:var(--accent)}
 td.ops button:disabled{opacity:.3;cursor:default}
 tr.card:hover td.ops button{border-color:var(--ink3)}
@@ -189,7 +200,7 @@ button.reset{font-size:11px;padding:3px 7px}
 .addrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0 2px}
 .addrow input{font:inherit;font-size:13px;padding:4px 8px;border:1px solid var(--line);border-radius:3px;background:var(--bg);color:var(--ink);min-width:220px}
 .addrow input:focus{outline:2px solid var(--accent);outline-offset:-1px}
-.ftab td.w{width:36px}
+
 .hbtns{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto;align-items:center}
 .hbtns button{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--accent);font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:15px;padding:4px 11px;border-radius:4px;cursor:pointer;margin:0}
 .hbtns button:hover,.hbtns button:focus-visible{border-color:var(--accent);outline:none}
@@ -460,7 +471,7 @@ function bfTable(G, cur){
   const cards = Object.keys(cur.bf).filter(c=>cur.bf[c]>0).sort((a,b)=>{ const ra=(G.BB.get(key(a,1))||{rate:0}).rate, rb=(G.BB.get(key(b,1))||{rate:0}).rate; return rb-ra || a.localeCompare(b); });
   return `<table>${cards.map(c=>{ const s=G.BB.get(key(c,1)), r=s?s.rate:0; return `<tr class="card" tabindex="0" role="button" aria-expanded="false" data-k="bf" data-c="${esc(c)}"><td class="n v1">1</td><td class="name">${esc(c)}${r<LOCK?'<i class="tag">flex</i>':''}</td><td class="rates"><b class="${r>=LOCK?'hi':'lo'}" title="${s?s.n:0} lists">${pct(r)}</b></td>${avgCell(G, s, 1)}${priceCell(c)}<td class="ops">${opBtn('bf-',c,'−','drop this battlefield')}</td></tr>`; }).join('')}</table>`;
 }
-const ftr = (r, ops) => `<tr class="card" tabindex="0" role="button" aria-expanded="false" data-k="${r.kind}" data-c="${esc(r.card)}"><td class="w">${r.where}</td><td class="name">${esc(r.card)}</td><td class="k">${r.kind==='bf'?'':(ORDN[r.k]||r.k+'th')+' copy'}</td><td class="r">${pct(r.rate)}%</td><td class="a">${r.avg.toFixed(1)}</td>${priceCell(r.card)}<td class="ops">${ops}</td></tr>`;
+const ftr = (r, ops) => `<tr class="card" tabindex="0" role="button" aria-expanded="false" data-k="${r.kind}" data-c="${esc(r.card)}"><td class="w"></td><td class="name">${r.where==='pool'?'':`<span class="wh ${r.where}">${r.where}</span>`}${esc(r.card)}</td><td class="k">${r.kind==='bf'?'':(ORDN[r.k]||r.k+'th')}</td><td class="r">${pct(r.rate)}%</td><td class="a">${r.avg.toFixed(1)}</td>${priceCell(r.card)}<td class="ops">${ops}</td></tr>`;
 function removedRows(G, cur){
   const rows=[];
   const cards = new Set([...Object.keys(G.main),...Object.keys(G.side)]);
@@ -474,8 +485,8 @@ function removedRows(G, cur){
   const was = r => [r.gm?`${r.gm} main`:'', r.gs?`${r.gs} side`:''].filter(Boolean).join(' + ');
   const now = r => (r.cm+r.cs) ? [r.cm?`${r.cm} main`:'', r.cs?`${r.cs} side`:''].filter(Boolean).join(' + ') : 'out';
   const full = r => r.cm+r.cs>=3;
-  const bfRows = Object.keys(G.bf).filter(c=>G.bf[c] && !cur.bf[c]).map(c=>{ const s=G.BB.get(key(c,1))||{rate:0}; return `<tr class="card" tabindex="0" role="button" aria-expanded="false" data-k="bf" data-c="${esc(c)}"><td class="w">bf</td><td class="name">${esc(c)}</td><td class="k">out</td><td class="r">${pct(s.rate)}%</td><td class="a"></td>${priceCell(c)}<td class="ops">${opBtn('bf+',c,'+','add this battlefield back')}</td></tr>`; }).join('');
-  return rows.map(r=>`<tr class="card" tabindex="0" role="button" aria-expanded="false" data-k="comb" data-c="${esc(r.card)}"><td class="w" title="generic list had ${was(r)}">was ${r.gm+r.gs}</td><td class="name">${esc(r.card)}</td><td class="k">${now(r)}</td><td class="r">${pct(r.rate)}%</td><td class="a">${r.avg?r.avg.toFixed(1):''}</td>${priceCell(r.card)}<td class="ops">${opBtn('m+',r.card,'+M','add one back to main',full(r))}${opBtn('s+',r.card,'+S','add one back to sideboard',full(r))}</td></tr>`).join('') + bfRows;
+  const bfRows = Object.keys(G.bf).filter(c=>G.bf[c] && !cur.bf[c]).map(c=>{ const s=G.BB.get(key(c,1))||{rate:0}; return `<tr class="card" tabindex="0" role="button" aria-expanded="false" data-k="bf" data-c="${esc(c)}"><td class="w"></td><td class="name"><span class="wh">bf</span>${esc(c)}</td><td class="k">out</td><td class="r">${pct(s.rate)}%</td><td class="a"></td>${priceCell(c)}<td class="ops">${opBtn('bf+',c,'+','add this battlefield back')}</td></tr>`; }).join('');
+  return rows.map(r=>`<tr class="card" tabindex="0" role="button" aria-expanded="false" data-k="comb" data-c="${esc(r.card)}"><td class="w"></td><td class="name"><span class="wh" title="generic list had ${was(r)}">was ${r.gm+r.gs}</span>${esc(r.card)}</td><td class="k">${now(r)}</td><td class="r">${pct(r.rate)}%</td><td class="a">${r.avg?r.avg.toFixed(1):''}</td>${priceCell(r.card)}<td class="ops">${opBtn('m+',r.card,'+M','add one back to main',full(r))}${opBtn('s+',r.card,'+S','add one back to sideboard',full(r))}</td></tr>`).join('') + bfRows;
 }
 function flexTables(G, cur){
   const weak=[], next=[];
@@ -503,13 +514,13 @@ function buildSection(leg, decks){
   const d = P.data[leg], info = P.legends[leg], n = decks.length;
   const G = computeGeneric(leg, decks), cur = current(leg, G), edited = !!EDITS[leg];
   const nm = sum(cur.main), ns = sum(cur.side), nb = sum(cur.bf);
-  const st = (v,t) => `<span class="${v===t?'ok':'bad'}">${v}/${t}</span>`;
+  const st = (v,t,l) => `<span class="stat ${v===t?'ok':'bad'}">${l} <b>${v}/${t}</b></span>`;
   const pa = picksAvg(G, cur.main, cur.side, cur.bf), ga = picksAvg(G, G.main, G.side, G.bf);
   const paCls = edited ? (pa < ga-0.05 ? 'ok' : pa > ga+0.05 ? 'bad' : '') : '';
   const dc = deckCost(cur.main, cur.side, cur.bf, info.full, (G.splits[0]||[''])[0]);
   const gc = deckCost(G.main, G.side, G.bf, info.full, (G.splits[0]||[''])[0]);
-  const costHtml = ` · <span class="cost" title="TCGplayer market price of the cheapest printing of every card in this list, incl. legend and 12 runes · as of ${esc(P.meta.prices_asof||'')}${dc.miss?` · ${dc.miss} unpriced`:''}">${money(dc.t)}</span>${edited && Math.abs(dc.t-gc.t)>0.005?` <span class="meta">(generic ${money(gc.t)})</span>`:''}`;
-  const paHtml = (isNaN(pa) ? '' : ` · picks avg place <span class="${paCls}" title="mean, over every copy in your list, of the average placing of the lists that ran that copy · sample average ${G.avgAll.toFixed(1)} · generic list ${ga.toFixed(1)}">${pa.toFixed(1)}</span>${edited?` <span class="meta">(generic ${ga.toFixed(1)})</span>`:''}`) + costHtml;
+  const costHtml = `<span class="stat cost" title="TCGplayer market price of the cheapest printing of every card in this list, incl. legend and 12 runes · as of ${esc(P.meta.prices_asof||'')}${dc.miss?` · ${dc.miss} unpriced`:''}">market <b>${money(dc.t)}</b>${edited && Math.abs(dc.t-gc.t)>0.005?` <span class="meta">generic ${money(gc.t)}</span>`:''}</span>`;
+  const paHtml = (isNaN(pa) ? '' : `<span class="stat ${paCls}" title="mean, over every copy in your list, of the average placing of the lists that ran that copy · sample average ${G.avgAll.toFixed(1)} · generic list ${ga.toFixed(1)}">avg place <b>${pa.toFixed(1)}</b>${edited?` <span class="meta">generic ${ga.toFixed(1)}</span>`:''}</span>`) + costHtml;
   const {weakH, nextH, removedH} = flexTables(G, cur);
   const doms = (info.domains||'').split('/').filter(Boolean).map(k=>`<span class="chip dom" style="--rc:${DOM[k]||'var(--ink3)'}">${k}</span>`).join('');
   const top = G.splits[0], others = G.splits.slice(1,4).map(([k,v])=>`${esc(k)} ×${v}`).join(' · ');
@@ -517,7 +528,8 @@ function buildSection(leg, decks){
   const poolCards = G.PS.filter(s=>s.k===1).map(s=>s.card).filter(c=>((cur.main[c]||0)+(cur.side[c]||0))<3).sort();
   const dl = `dl-${slug(leg)}`;
   return `<section class="legend v-build" id="${slug(leg)}" data-leg="${esc(leg)}">
-    <div class="lhead"><h2>${esc(leg)}</h2><span class="cnt">from ${n} list${n>1?'s':''} (${eventSplit(decks)}) · pool over ${G.poolN} with sideboards · main ${st(nm,40)} · side ${st(ns,10)} · battlefields ${st(nb,3)}${paHtml}${edited?` <i class="tag edit">${cur.name?esc(cur.name):'edited'}</i>`:''}</span>
+    <div class="lhead"><h2>${esc(leg)}</h2><span class="cnt">from ${n} list${n>1?'s':''} (${eventSplit(decks)}) · pool over ${G.poolN} with sideboards${edited?` <i class="tag edit">${cur.name?esc(cur.name):'edited'}</i>`:''}</span></div>
+    <div class="stats">${st(nm,40,'main')}${st(ns,10,'side')}${st(nb,3,'battlefields')}${paHtml}
       <span class="hbtns">${edited?`<button type="button" class="reset" data-op="reset" title="back to the generic list">Reset</button>`:''}<button type="button" data-op="save" title="keep a named copy of this list in this browser">Save</button><button type="button" data-op="share" title="copy a link that carries this whole list">Link</button><button type="button" class="copy" data-text="${esc(text)}">Copy list</button></span></div>
     ${savedChips(leg, cur)}
     <div class="chips"><span class="chip"><b>${esc(info.full)}</b> legend</span>${doms}${top?`<span class="chip"><b>Runes</b> ${esc(top[0])} <span class="meta">${top[1]}/${n} lists</span></span>`:''}</div>
@@ -534,9 +546,9 @@ function buildSection(leg, decks){
     </div>
     <div class="flexbox"><h3>Flex choices <span>weakest slots in the list vs. next in line · click a row for its copy split</span></h3>
       <div class="fcols">
-        <div><h4>Cut first (in the list, under ${pct(LOCK)}% of the pool)</h4>${weakH?`<table class="ftab">${weakH}</table>`:'<p class="miss" style="padding:6px 0 0">Every slot is locked.</p>'}</div>
-        <div>${removedH?`<h4>Removed from the generic list (add back)</h4><table class="ftab">${removedH}</table>`:''}
-          <h4>Next in line (not in the list, ${pct(ALT)}%+)</h4>${nextH?`<table class="ftab">${nextH}</table>`:'<p class="miss" style="padding:6px 0 0">Nothing else reached '+pct(ALT)+'%.</p>'}
+        <div><h4>Cut first <span class="meta">in the list, under ${pct(LOCK)}% of the pool · copy · share · avg place · price</span></h4>${weakH?`<table class="ftab">${weakH}</table>`:'<p class="miss" style="padding:6px 0 0">Every slot is locked.</p>'}</div>
+        <div>${removedH?`<h4>Removed from the generic list <span class="meta">add back</span></h4><table class="ftab">${removedH}</table>`:''}
+          <h4>Next in line <span class="meta">not in the list, ${pct(ALT)}%+</span></h4>${nextH?`<table class="ftab">${nextH}</table>`:'<p class="miss" style="padding:6px 0 0">Nothing else reached '+pct(ALT)+'%.</p>'}
           <div class="addrow"><input list="${dl}" placeholder="add any card seen for ${esc(leg)}…" aria-label="card to add"><datalist id="${dl}">${poolCards.map(c=>`<option value="${esc(c)}">`).join('')}</datalist>${opBtn('add-m','','+M','add to main')}${opBtn('add-s','','+S','add to sideboard')}</div>
         </div>
       </div>
@@ -689,7 +701,7 @@ function buySection(){
     return `<tr class="${BOUGHT[r.card]?'done':''}${grp}"><td class="chk"><input type="checkbox" data-buy="done" data-c="${esc(r.card)}"${BOUGHT[r.card]?' checked':''} aria-label="bought ${esc(r.card)}"></td><td class="name">${esc(r.card)}<small>${r.group==='card'?'':r.group==='bf'?'battlefield':r.group}</small></td><td class="money unit">${money(r.price)}</td><td class="need">${r.need}</td><td class="money tot">${money(r.line)}</td>${cells}<td class="print">${pr?`<a href="${pr.u}" target="_blank" rel="noopener">${esc(pr.set)}</a> <span>${esc(pr.num)} · ${esc(pr.r)}</span>`:'–'}</td><td class="money">${pr&&pr.l!=null?money(pr.l):'–'}</td></tr>`; }).join('');
   const table = nOn ? `<div class="buywrap"><table class="buy">${head}${body||`<tr><td colspan="${7+on.length}" class="miss" style="padding:14px 6px">Nothing left to buy for these legends.</td></tr>`}</table></div>` : '';
   const text = ['// Riftbound buy list — '+on.join(', ')+(N?` + ${N} flex slots each`:'')+` · ${BUY.count==='all'?'all decks at once':'one deck at a time'}`, ...rows.slice().sort((a,b)=>b.line-a.line).filter(r=>!BOUGHT[r.card]).map(r=>`${r.need} ${r.card} — ${money(r.price)} each${PR[r.card]?` (${PR[r.card].set} ${PR[r.card].num})`:''}`), '', `// ${money(toBuy.reduce((a,r)=>a+r.line,0))} at TCGplayer market, cheapest printing per card, as of ${P.meta.prices_asof||''}`].join('\n');
-  return `<section class="legend v-buy" id="buy" data-leg=""><div class="lhead"><h2>Buy list</h2><span class="cnt">built from each legend's current list on this page${N?` + ${N} next-in-line flex slots`:''} · prices as of ${esc(P.meta.prices_asof||'')}</span></div><div class="tiles">${tiles}</div>${ctl}${table}<textarea id="buytext" hidden>${esc(text)}</textarea></section>`;
+  return `<section class="legend v-buy" id="buy" data-leg=""><div class="lhead"><h2>Buy list</h2><span class="cnt">each legend's current list on this page${N?` + ${N} next-in-line flex slots`:''} · prices as of ${esc(P.meta.prices_asof||'')}</span></div><div class="tiles">${tiles}</div>${ctl}${table}<textarea id="buytext" hidden>${esc(text)}</textarea></section>`;
 }
 main.addEventListener('click', e=>{
   const b = e.target.closest('[data-buy]'); if(!b || b.tagName==='INPUT') return;
