@@ -49,6 +49,12 @@ with the flex slots marked.
   header counts turn red when the list is off 40 / 10 / 3. Edits are kept per
   legend in the browser (localStorage) until Reset; Copy list copies the
   edited list.
+- **Saving.** Save keeps a named copy of the current list under its legend;
+  each save is a chip with Load, Link and delete. Link copies a URL with the
+  whole list encoded in the hash, so it opens on any machine and can be
+  bookmarked or shared; opening one drops it into the editor as the working
+  copy. Export in the control bar copies every save as JSON and Import merges
+  that JSON back in, for moving saves between browsers.
 - **Flex choices** pairs the weakest slots in the list ("cut first") with the
   next cards in line that did not make it ("next in line", 10% or more),
   each with its share and average placing.

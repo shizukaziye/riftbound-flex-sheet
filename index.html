@@ -138,6 +138,19 @@ button.reset{font-size:11px;padding:3px 7px}
 .addrow input{font:inherit;font-size:13px;padding:4px 8px;border:1px solid var(--line);border-radius:3px;background:var(--bg);color:var(--ink);min-width:220px}
 .addrow input:focus{outline:2px solid var(--accent);outline-offset:-1px}
 .ftab td.w{width:36px}
+.hbtns{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto;align-items:center}
+.hbtns button{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--accent);font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:15px;padding:4px 11px;border-radius:4px;cursor:pointer;margin:0}
+.hbtns button:hover,.hbtns button:focus-visible{border-color:var(--accent);outline:none}
+.hbtns button.reset{color:var(--ink2)}
+.saves{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:10px 20px 0}
+.chip.save{display:inline-flex;align-items:center;gap:6px;padding:3px 4px 3px 8px}
+.chip.save b{font-weight:600}
+.chip.save small{color:var(--ink3);font-size:10.5px}
+.chip.save button{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink2);font-family:"JetBrains Mono",monospace;font-size:10.5px;line-height:1;padding:3px 5px;border-radius:3px;cursor:pointer;margin:0}
+.chip.save button:hover{border-color:var(--accent);color:var(--accent)}
+.chip.save.cur{border-color:var(--accent)}
+.ctl.io button{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink2);font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:15px;padding:5px 11px;border-radius:4px;cursor:pointer}
+.ctl.io button:hover{border-color:var(--accent);color:var(--accent)}
 </style>
 </head>
 <body>
@@ -150,7 +163,7 @@ button.reset{font-size:11px;padding:3px 7px}
 <div class="how">
   <p class="v-sheet"><b>Reading the sheet.</b> The number is the max copies seen (a 1-of in one list, 0 in another, 2 in a third → shows as <b>2</b>). The bar is how many of that legend's lists ran the card at all. Rows tagged <i>core</i> were in every list. <b>Separate</b> tallies main deck and sideboard on their own; <b>Combined</b> adds each list's main and sideboard copies first, then takes the max, which is the count you need to own to build any one list.</p>
   <p class="v-build"><b>Reading the generic list.</b> Main deck and sideboard are treated as one 50-card pool. Every copy of every card is a slot, scored by the share of lists that ran at least that many copies across main + sideboard (over lists that posted a sideboard). The 50 best slots make the pool, then the 40 that most often sat in the main deck become the main deck and the other 10 the sideboard. The three cells on each row are the pool shares for the 1st, 2nd and 3rd copy: filled = <b>locked</b> (two thirds or more), outlined = <b>flex</b>, dotted = a copy this list keeps in the sideboard. Hover a cell for the main / side split.</p>
-  <p class="v-build"><b>Adjusting the list.</b> On any row, <b>−</b> drops a copy, <b>+</b> adds one (up to 3 in total), and <b>▾S</b> / <b>▴M</b> move one between main and sideboard. Anything you drop below the generic count shows under <b>Removed</b> with add-back buttons; <b>Next in line</b> and the add box bring in cards that were never in. Counts turn red when the list is off 40 / 10 / 3. Edits are kept per legend in this browser until you press Reset.</p>
+  <p class="v-build"><b>Adjusting the list.</b> On any row, <b>−</b> drops a copy, <b>+</b> adds one (up to 3 in total), and <b>▾S</b> / <b>▴M</b> move one between main and sideboard. Anything you drop below the generic count shows under <b>Removed</b> with add-back buttons; <b>Next in line</b> and the add box bring in cards that were never in. Counts turn red when the list is off 40 / 10 / 3. Edits are kept per legend in this browser until you press Reset. <b>Save</b> keeps a named copy under the legend (Load, Link, delete from its chip), <b>Link</b> copies a URL that carries the whole list so it opens on any machine, and <b>Export</b> / <b>Import</b> in the bar move every save between browsers as text.</p>
   <p><b>Click any row</b> for the copy split: how many lists ran it at 3, 2 or 1 copies or not at all, their share, and the average placing of each group. Average placing mixes big cuts (1–64) with smaller events where every list is a top 4, so read it as a hint, not a ranking.</p>
 </div>
 <div class="ctlbar" role="group" aria-label="Controls">
@@ -158,6 +171,7 @@ button.reset{font-size:11px;padding:3px 7px}
   <div class="ctl v-sheet"><span class="lab">Sideboard</span><span class="seg" data-key="view"><button type="button" data-v="separate">Separate</button><button type="button" data-v="combined">Combined</button></span></div>
   <div class="ctl"><span class="lab">Source</span><span class="seg" data-key="src"><button type="button" data-v="all">All lists</button><button type="button" data-v="cuts">Big cuts</button><button type="button" data-v="t4">Top 4 elsewhere</button></span></div>
   <div class="ctl"><span class="lab">Placing</span><span class="seg" data-key="place"><button type="button" data-v="0">Any</button><button type="button" data-v="4">Top 4</button><button type="button" data-v="8">Top 8</button><button type="button" data-v="16">Top 16</button><button type="button" data-v="32">Top 32</button></span></div>
+  <div class="ctl io v-build"><span class="lab">Saves</span><button type="button" id="io-export" title="copy every saved deck as JSON">Export</button><button type="button" id="io-import" title="paste JSON from Export to merge it in">Import</button></div>
   <span class="hint" id="hint"></span>
 </div>
 <div class="layout">
@@ -188,6 +202,16 @@ const GROUPS = [['champion','Champion'],['unit','Units'],['spell','Spells'],['ge
 const state = {mode:'sheet', view:'separate', src:'all', place:0};
 let EDITS = {}; try{ EDITS = JSON.parse(localStorage.getItem('flex-edits')||'{}') || {}; }catch(e){}
 const saveEdits = () => { try{ localStorage.setItem('flex-edits', JSON.stringify(EDITS)); }catch(e){} };
+let SAVES = {}; try{ SAVES = JSON.parse(localStorage.getItem('flex-saves')||'{}') || {}; }catch(e){}
+const saveSaves = () => { try{ localStorage.setItem('flex-saves', JSON.stringify(SAVES)); }catch(e){} };
+const b64e = str => btoa(unescape(encodeURIComponent(str))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const b64d = str => decodeURIComponent(escape(atob(str.replace(/-/g,'+').replace(/_/g,'/'))));
+const deckLink = (leg, deck, name) => `${location.origin}${location.pathname}#d=${b64e(JSON.stringify({l:leg, n:name||'', m:deck.main, s:deck.side, b:deck.bf}))}`;
+let LINKED = null;
+try{
+  const m = location.hash.match(/^#d=(.+)$/);
+  if(m){ const o = JSON.parse(b64d(m[1])); if(o && P.data[o.l] && o.m && o.s && o.b){ LINKED = o.l; EDITS[o.l] = {main:o.m, side:o.s, bf:o.b, name:o.n||''}; saveEdits(); state.mode='build'; } }
+}catch(e){}
 try{ const s = JSON.parse(localStorage.getItem('flex-state')||'{}'); for(const k of Object.keys(state)) if(s[k]!==undefined) state[k]=s[k]; if(localStorage.getItem('flex-view')==='combined' && !s.view) state.view='combined'; }catch(e){}
 const FD = {}; // filtered decks per legend, refreshed on render
 
@@ -378,6 +402,11 @@ function flexTables(G, cur){
               + bfNext.map(r=> ftr(r, opBtn('bf+',r.card,'+','add this battlefield'))).join('');
   return {weakH, nextH, removedH: removedRows(G, cur)};
 }
+function savedChips(leg, cur){
+  const list = SAVES[leg]||[]; if(!list.length) return '';
+  const fmt = ts => new Date(ts).toLocaleDateString(undefined,{month:'short',day:'numeric'});
+  return `<div class="saves"><span class="lab">Saved</span>${list.map((sv,i)=>`<span class="chip save${cur.name===sv.name?' cur':''}"><b>${esc(sv.name)}</b><small>${fmt(sv.ts)}</small><button type="button" data-op="load" data-i="${i}" title="load this deck into the editor">Load</button><button type="button" data-op="link" data-i="${i}" title="copy a link to this deck">Link</button><button type="button" data-op="del" data-i="${i}" title="delete this save">×</button></span>`).join('')}</div>`;
+}
 function buildSection(leg, decks){
   const d = P.data[leg], info = P.legends[leg], n = decks.length;
   const G = computeGeneric(leg, decks), cur = current(leg, G), edited = !!EDITS[leg];
@@ -390,7 +419,9 @@ function buildSection(leg, decks){
   const poolCards = G.PS.filter(s=>s.k===1).map(s=>s.card).filter(c=>((cur.main[c]||0)+(cur.side[c]||0))<3).sort();
   const dl = `dl-${slug(leg)}`;
   return `<section class="legend v-build" id="${slug(leg)}" data-leg="${esc(leg)}">
-    <div class="lhead"><h2>${esc(leg)}</h2><span class="cnt">from ${n} list${n>1?'s':''} (${eventSplit(decks)}) · pool over ${G.poolN} with sideboards · main ${st(nm,40)} · side ${st(ns,10)} · battlefields ${st(nb,3)}${edited?' <i class="tag edit">edited</i>':''}</span>${edited?`<button type="button" class="reset" data-op="reset">Reset</button>`:''}<button type="button" class="copy" data-text="${esc(text)}"${edited?'':' style="margin-left:auto"'}>Copy list</button></div>
+    <div class="lhead"><h2>${esc(leg)}</h2><span class="cnt">from ${n} list${n>1?'s':''} (${eventSplit(decks)}) · pool over ${G.poolN} with sideboards · main ${st(nm,40)} · side ${st(ns,10)} · battlefields ${st(nb,3)}${edited?` <i class="tag edit">${cur.name?esc(cur.name):'edited'}</i>`:''}</span>
+      <span class="hbtns">${edited?`<button type="button" class="reset" data-op="reset" title="back to the generic list">Reset</button>`:''}<button type="button" data-op="save" title="keep a named copy of this list in this browser">Save</button><button type="button" data-op="share" title="copy a link that carries this whole list">Link</button><button type="button" class="copy" data-text="${esc(text)}">Copy list</button></span></div>
+    ${savedChips(leg, cur)}
     <div class="chips"><span class="chip"><b>${esc(info.full)}</b> legend</span>${doms}${top?`<span class="chip"><b>Runes</b> ${esc(top[0])} <span class="meta">${top[1]}/${n} lists</span></span>`:''}</div>
     ${n<3?`<div class="note" style="margin-top:10px">Only ${n} list${n>1?'s':''} in this sample, so the "generic" list is close to a copy of ${n>1?'them':'it'}.</div>`:''}
     <div class="bcols">
@@ -420,6 +451,22 @@ function applyOp(btn){
   const G = computeGeneric(leg, FD[leg]);
   if(op==='reset'){ delete EDITS[leg]; saveEdits(); rerender(sec, leg); return; }
   const cur = clone(current(leg, G));
+  const flash = (b, t) => { const old=b.textContent; b.textContent=t; setTimeout(()=>{ b.textContent=old; }, 1400); };
+  const copyText = async (t) => { try{ await navigator.clipboard.writeText(t); }catch(e){ const ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');}catch(_){} ta.remove(); } };
+  if(op==='save'){
+    const def = cur.name || `${leg} ${new Date().toISOString().slice(0,10)}`;
+    const name = (window.prompt('Name this deck', def)||'').trim(); if(!name) return;
+    const list = SAVES[leg] = SAVES[leg]||[]; const i = list.findIndex(x=>x.name===name);
+    const rec = {name, ts:Date.now(), main:cur.main, side:cur.side, bf:cur.bf};
+    if(i>=0) list[i]=rec; else list.push(rec);
+    EDITS[leg] = {...cur, name}; saveSaves(); saveEdits(); rerender(sec, leg); return;
+  }
+  if(op==='share'){ copyText(deckLink(leg, cur, cur.name)); flash(btn, 'Link copied'); return; }
+  if(op==='load'){ const sv=(SAVES[leg]||[])[+btn.dataset.i]; if(!sv) return; EDITS[leg]={main:clone(sv.main), side:clone(sv.side), bf:clone(sv.bf), name:sv.name}; saveEdits(); rerender(sec, leg); return; }
+  if(op==='link'){ const sv=(SAVES[leg]||[])[+btn.dataset.i]; if(!sv) return; copyText(deckLink(leg, sv, sv.name)); flash(btn, 'Copied'); return; }
+  if(op==='del'){ const sv=(SAVES[leg]||[])[+btn.dataset.i]; if(!sv || !window.confirm(`Delete saved deck "${sv.name}"?`)) return; SAVES[leg].splice(+btn.dataset.i,1); if(!SAVES[leg].length) delete SAVES[leg]; saveSaves(); rerender(sec, leg); return; }
+  // any card edit detaches the working copy from its saved name
+  delete cur.name;
   let c = btn.dataset.c;
   if(op==='add-m' || op==='add-s'){ const inp = btn.parentElement.querySelector('input'); c = (inp.value||'').trim(); const hit = G.PS.find(s=>s.card.toLowerCase()===c.toLowerCase()); if(!hit){ inp.setCustomValidity('not a card seen for this legend'); inp.reportValidity(); setTimeout(()=>inp.setCustomValidity(''),1500); return; } c = hit.card; }
   const tot = () => (cur.main[c]||0)+(cur.side[c]||0);
@@ -523,6 +570,20 @@ document.querySelector('.ctlbar').addEventListener('click', e=>{
   const y = window.scrollY; render(); window.scrollTo(0, y);
 });
 render();
+document.getElementById('io-export').addEventListener('click', async e=>{
+  const b=e.currentTarget, t=JSON.stringify({saves:SAVES, v:1});
+  try{ await navigator.clipboard.writeText(t); }catch(err){ window.prompt('Copy this JSON', t); }
+  const old=b.textContent; b.textContent='Copied'; setTimeout(()=>b.textContent=old,1400);
+});
+document.getElementById('io-import').addEventListener('click', ()=>{
+  const t = window.prompt('Paste the JSON from Export'); if(!t) return;
+  try{
+    const o = JSON.parse(t), src = o.saves||o; let n=0;
+    for(const [leg, list] of Object.entries(src)){ if(!P.data[leg] || !Array.isArray(list)) continue; const dst = SAVES[leg] = SAVES[leg]||[]; for(const sv of list){ if(!sv||!sv.name||!sv.main) continue; const i=dst.findIndex(x=>x.name===sv.name); if(i>=0) dst[i]=sv; else dst.push(sv); n++; } }
+    saveSaves(); render(); window.alert(`Imported ${n} deck${n===1?'':'s'}.`);
+  }catch(err){ window.alert('That did not parse as Export JSON.'); }
+});
+if(LINKED){ const el=document.getElementById(slug(LINKED)); if(el){ el.scrollIntoView(); } history.replaceState(null,'','#'+slug(LINKED)); }
 </script>
 <script src="https://www.loseii.com/nav.js" defer></script>
 <script src="https://www.loseii.com/social-bar.js" defer></script>
