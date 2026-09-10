@@ -126,6 +126,8 @@ button.copy:hover,button.copy:focus-visible{border-color:var(--accent);outline:n
 .empty{padding:14px 20px;color:var(--ink3);font-size:13px}
 td.rates b.sb{background:transparent;color:var(--ink2);box-shadow:inset 0 0 0 1px var(--ink3);border-style:dotted}
 td.ops{width:84px;padding:0 0 0 6px;white-space:nowrap;text-align:right}
+.bcols td.a{width:44px;text-align:right;font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--ink3);padding-right:0}
+.bcols td.a.good{color:var(--calm)} .bcols td.a.poor{color:var(--fury)}
 td.ops button,.addrow button,button.reset{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink2);font-family:"JetBrains Mono",monospace;font-size:10.5px;font-weight:500;line-height:1;padding:3px 5px;border-radius:3px;cursor:pointer;margin-left:3px}
 td.ops button:hover,.addrow button:hover,button.reset:hover{border-color:var(--accent);color:var(--accent)}
 td.ops button:disabled{opacity:.3;cursor:default}
@@ -162,7 +164,7 @@ button.reset{font-size:11px;padding:3px 7px}
 </header>
 <div class="how">
   <p class="v-sheet"><b>Reading the sheet.</b> The number is the max copies seen (a 1-of in one list, 0 in another, 2 in a third → shows as <b>2</b>). The bar is how many of that legend's lists ran the card at all. Rows tagged <i>core</i> were in every list. <b>Separate</b> tallies main deck and sideboard on their own; <b>Combined</b> adds each list's main and sideboard copies first, then takes the max, which is the count you need to own to build any one list.</p>
-  <p class="v-build"><b>Reading the generic list.</b> Main deck and sideboard are treated as one 50-card pool. Every copy of every card is a slot, scored by the share of lists that ran at least that many copies across main + sideboard (over lists that posted a sideboard). The 50 best slots make the pool, then the 40 that most often sat in the main deck become the main deck and the other 10 the sideboard. The three cells on each row are the pool shares for the 1st, 2nd and 3rd copy: filled = <b>locked</b> (two thirds or more), outlined = <b>flex</b>, dotted = a copy this list keeps in the sideboard. Hover a cell for the main / side split.</p>
+  <p class="v-build"><b>Reading the generic list.</b> Main deck and sideboard are treated as one 50-card pool. Every copy of every card is a slot, scored by the share of lists that ran at least that many copies across main + sideboard (over lists that posted a sideboard). The 50 best slots make the pool, then the 40 that most often sat in the main deck become the main deck and the other 10 the sideboard. The three cells on each row are the pool shares for the 1st, 2nd and 3rd copy: filled = <b>locked</b> (two thirds or more), outlined = <b>flex</b>, dotted = a copy this list keeps in the sideboard. Hover a cell for the main / side split. The last number on each row is the <b>average placing</b> of the lists that ran at least that many copies, green when a point or more better than the sample average and red when a point or more worse; the header carries the mean over every copy you have picked, next to the generic list's figure once you edit.</p>
   <p class="v-build"><b>Adjusting the list.</b> On any row, <b>−</b> drops a copy, <b>+</b> adds one (up to 3 in total), and <b>▾S</b> / <b>▴M</b> move one between main and sideboard. Anything you drop below the generic count shows under <b>Removed</b> with add-back buttons; <b>Next in line</b> and the add box bring in cards that were never in. Counts turn red when the list is off 40 / 10 / 3. Edits are kept per legend in this browser until you press Reset. <b>Save</b> keeps a named copy under the legend (Load, Link, delete from its chip), <b>Link</b> copies a URL that carries the whole list so it opens on any machine, and <b>Export</b> / <b>Import</b> in the bar move every save between browsers as text.</p>
   <p><b>Click any row</b> for the copy split: how many lists ran it at 3, 2 or 1 copies or not at all, their share, and the average placing of each group. Average placing mixes big cuts (1–64) with smaller events where every list is a top 4, so read it as a hint, not a ranking.</p>
 </div>
@@ -318,7 +320,8 @@ function computeGeneric(leg, decks){
   const bf = pick(BS, 3).cnt;
   const splits = new Map();
   for(const x of decks){ const k = Object.entries(x.r).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).map(([r,v])=>`${v} ${r.replace(' Rune','')}`).join(' / '); splits.set(k,(splits.get(k)||0)+1); }
-  return {PS, PB, MB, SB, BS, BB, main, side, bf, poolN: poolDecks.length, sbN: sbs.length, splits:[...splits.entries()].sort((a,b)=>b[1]-a[1])};
+  const avgAll = decks.reduce((a,x)=>a+x.rank,0)/decks.length;
+  return {PS, PB, MB, SB, BS, BB, main, side, bf, avgAll, poolN: poolDecks.length, sbN: sbs.length, splits:[...splits.entries()].sort((a,b)=>b[1]-a[1])};
 }
 const clone = o => JSON.parse(JSON.stringify(o));
 function current(leg, G){ return EDITS[leg] ? EDITS[leg] : {main:clone(G.main), side:clone(G.side), bf:clone(G.bf)}; }
@@ -338,6 +341,23 @@ function rateCells(G, c, mainCnt, combCnt){
   return out;
 }
 const opBtn = (op, c, label, title, dis) => `<button type="button" data-op="${op}" data-c="${esc(c)}" title="${title}"${dis?' disabled':''}>${label}</button>`;
+// average placing of the lists that ran at least `k` copies; tinted against the sample's own average
+function avgCell(G, slot, k){
+  if(!slot || !slot.n) return `<td class="a" title="no sampled list ran ${k} cop${k===1?'y':'ies'}">–</td>`;
+  const cls = slot.avg <= G.avgAll-1 ? ' good' : slot.avg >= G.avgAll+1 ? ' poor' : '';
+  return `<td class="a${cls}" title="average placing of the ${slot.n} lists running ${k}+ cop${k===1?'y':'ies'} (sample average ${G.avgAll.toFixed(1)})">${slot.avg.toFixed(1)}</td>`;
+}
+// mean over every included slot of that slot's average placing
+function picksAvg(G, main, side, bf){
+  let sum=0, n=0;
+  for(const [o,isBf] of [[main,false],[side,false],[bf,true]]) for(const [c,q] of Object.entries(o)){
+    if(isBf){ const s=G.BB.get(key(c,1)); if(s){ sum+=s.avg; n++; } continue; }
+    const comb=(main[c]||0)+(side[c]||0);
+    if(o===side && main[c]) continue; // count a card's copies once, from its total
+    for(let k=1;k<=comb;k++){ const s=G.PB.get(key(c,k)); if(s){ sum+=s.avg; n++; } }
+  }
+  return n ? sum/n : NaN;
+}
 function listRows(G, cur, cards, where, leg){
   const cnt = where==='main' ? cur.main : cur.side;
   return cards.sort((a,b)=> cnt[b]-cnt[a] || a.localeCompare(b)).map(c=>{
@@ -348,7 +368,7 @@ function listRows(G, cur, cards, where, leg){
     const ops = where==='main'
       ? opBtn('m-',c,'−','drop one from main') + opBtn('m+',c,'+',full?'already 3 copies':'add one to main',full) + opBtn('m2s',c,'▾S','move one to sideboard')
       : opBtn('s-',c,'−','drop one from sideboard') + opBtn('s+',c,'+',full?'already 3 copies':'add one to sideboard',full) + opBtn('s2m',c,'▴M','move one to main');
-    return `<tr class="card" tabindex="0" role="button" aria-expanded="false" data-k="${where}" data-c="${esc(c)}"><td class="n v${cnt[c]}">${cnt[c]}</td><td class="name${ch}">${esc(c)}${flex?'<i class="tag">flex</i>':''}</td><td class="rates">${rateCells(G,c,mc,comb)}</td><td class="ops">${ops}</td></tr>`;
+    return `<tr class="card" tabindex="0" role="button" aria-expanded="false" data-k="${where}" data-c="${esc(c)}"><td class="n v${cnt[c]}">${cnt[c]}</td><td class="name${ch}">${esc(c)}${flex?'<i class="tag">flex</i>':''}</td><td class="rates">${rateCells(G,c,mc,comb)}</td>${avgCell(G, G.PB.get(key(c,comb)), comb)}<td class="ops">${ops}</td></tr>`;
   }).join('');
 }
 function mainTable(G, cur, leg){
@@ -366,7 +386,7 @@ function sideTable(G, cur, leg){
 }
 function bfTable(G, cur){
   const cards = Object.keys(cur.bf).filter(c=>cur.bf[c]>0).sort((a,b)=>{ const ra=(G.BB.get(key(a,1))||{rate:0}).rate, rb=(G.BB.get(key(b,1))||{rate:0}).rate; return rb-ra || a.localeCompare(b); });
-  return `<table>${cards.map(c=>{ const s=G.BB.get(key(c,1)), r=s?s.rate:0; return `<tr class="card" tabindex="0" role="button" aria-expanded="false" data-k="bf" data-c="${esc(c)}"><td class="n v1">1</td><td class="name">${esc(c)}${r<LOCK?'<i class="tag">flex</i>':''}</td><td class="rates"><b class="${r>=LOCK?'hi':'lo'}" title="${s?s.n:0} lists">${pct(r)}</b></td><td class="ops">${opBtn('bf-',c,'−','drop this battlefield')}</td></tr>`; }).join('')}</table>`;
+  return `<table>${cards.map(c=>{ const s=G.BB.get(key(c,1)), r=s?s.rate:0; return `<tr class="card" tabindex="0" role="button" aria-expanded="false" data-k="bf" data-c="${esc(c)}"><td class="n v1">1</td><td class="name">${esc(c)}${r<LOCK?'<i class="tag">flex</i>':''}</td><td class="rates"><b class="${r>=LOCK?'hi':'lo'}" title="${s?s.n:0} lists">${pct(r)}</b></td>${avgCell(G, s, 1)}<td class="ops">${opBtn('bf-',c,'−','drop this battlefield')}</td></tr>`; }).join('')}</table>`;
 }
 const ftr = (r, ops) => `<tr class="card" tabindex="0" role="button" aria-expanded="false" data-k="${r.kind}" data-c="${esc(r.card)}"><td class="w">${r.where}</td><td class="name">${esc(r.card)}</td><td class="k">${r.kind==='bf'?'':(ORDN[r.k]||r.k+'th')+' copy'}</td><td class="r">${pct(r.rate)}%</td><td class="a">${r.avg.toFixed(1)}</td><td class="ops">${ops}</td></tr>`;
 function removedRows(G, cur){
@@ -412,6 +432,9 @@ function buildSection(leg, decks){
   const G = computeGeneric(leg, decks), cur = current(leg, G), edited = !!EDITS[leg];
   const nm = sum(cur.main), ns = sum(cur.side), nb = sum(cur.bf);
   const st = (v,t) => `<span class="${v===t?'ok':'bad'}">${v}/${t}</span>`;
+  const pa = picksAvg(G, cur.main, cur.side, cur.bf), ga = picksAvg(G, G.main, G.side, G.bf);
+  const paCls = edited ? (pa < ga-0.05 ? 'ok' : pa > ga+0.05 ? 'bad' : '') : '';
+  const paHtml = isNaN(pa) ? '' : ` · picks avg place <span class="${paCls}" title="mean, over every copy in your list, of the average placing of the lists that ran that copy · sample average ${G.avgAll.toFixed(1)} · generic list ${ga.toFixed(1)}">${pa.toFixed(1)}</span>${edited?` <span class="meta">(generic ${ga.toFixed(1)})</span>`:''}`;
   const {weakH, nextH, removedH} = flexTables(G, cur);
   const doms = (info.domains||'').split('/').filter(Boolean).map(k=>`<span class="chip dom" style="--rc:${DOM[k]||'var(--ink3)'}">${k}</span>`).join('');
   const top = G.splits[0], others = G.splits.slice(1,4).map(([k,v])=>`${esc(k)} ×${v}`).join(' · ');
@@ -419,16 +442,16 @@ function buildSection(leg, decks){
   const poolCards = G.PS.filter(s=>s.k===1).map(s=>s.card).filter(c=>((cur.main[c]||0)+(cur.side[c]||0))<3).sort();
   const dl = `dl-${slug(leg)}`;
   return `<section class="legend v-build" id="${slug(leg)}" data-leg="${esc(leg)}">
-    <div class="lhead"><h2>${esc(leg)}</h2><span class="cnt">from ${n} list${n>1?'s':''} (${eventSplit(decks)}) · pool over ${G.poolN} with sideboards · main ${st(nm,40)} · side ${st(ns,10)} · battlefields ${st(nb,3)}${edited?` <i class="tag edit">${cur.name?esc(cur.name):'edited'}</i>`:''}</span>
+    <div class="lhead"><h2>${esc(leg)}</h2><span class="cnt">from ${n} list${n>1?'s':''} (${eventSplit(decks)}) · pool over ${G.poolN} with sideboards · main ${st(nm,40)} · side ${st(ns,10)} · battlefields ${st(nb,3)}${paHtml}${edited?` <i class="tag edit">${cur.name?esc(cur.name):'edited'}</i>`:''}</span>
       <span class="hbtns">${edited?`<button type="button" class="reset" data-op="reset" title="back to the generic list">Reset</button>`:''}<button type="button" data-op="save" title="keep a named copy of this list in this browser">Save</button><button type="button" data-op="share" title="copy a link that carries this whole list">Link</button><button type="button" class="copy" data-text="${esc(text)}">Copy list</button></span></div>
     ${savedChips(leg, cur)}
     <div class="chips"><span class="chip"><b>${esc(info.full)}</b> legend</span>${doms}${top?`<span class="chip"><b>Runes</b> ${esc(top[0])} <span class="meta">${top[1]}/${n} lists</span></span>`:''}</div>
     ${n<3?`<div class="note" style="margin-top:10px">Only ${n} list${n>1?'s':''} in this sample, so the "generic" list is close to a copy of ${n>1?'them':'it'}.</div>`:''}
     <div class="bcols">
-      <div><h3>Main deck <span>pool share of 1st · 2nd · 3rd copy</span></h3>${mainTable(G,cur,leg)}</div>
+      <div><h3>Main deck <span>pool share of 1st · 2nd · 3rd copy · avg place</span></h3>${mainTable(G,cur,leg)}</div>
       <div>
         <h3>Sideboard <span>${G.sbN} of ${n} lists posted one</span></h3>${sideTable(G,cur,leg)}
-        <h3 style="margin-top:14px">Battlefields <span>share running it</span></h3>${bfTable(G,cur)}
+        <h3 style="margin-top:14px">Battlefields <span>share running it · avg place</span></h3>${bfTable(G,cur)}
         <h3 style="margin-top:14px">Runes <span>most common split</span></h3>
         <div class="chips" style="padding:0">${top?`<span class="chip rune" style="--rc:var(--accent)"><b>${esc(top[0])}</b> ${top[1]}/${n}</span>`:''}</div>
         ${others?`<div class="rsplits">also seen: ${others}</div>`:''}
