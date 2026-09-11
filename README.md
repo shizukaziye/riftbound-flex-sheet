@@ -50,6 +50,10 @@ with the flex slots marked, editable, saveable and shareable.
   sideboard. A card never exceeds 3 copies in total. The legend's own champion
   is always seeded in. Battlefields are the 3 best by share. Runes are the
   most common exact split, with the other splits seen listed beside it.
+- Rows are sorted by energy cost within each type; the pill before the name
+  is the energy cost and a gold number beside it the power cost (from
+  TCGplayer's card attributes, `attrs` in `P`). The copied text and the Build
+  it checklist's list order follow the same order.
 - Each row shows the pool shares for the 1st, 2nd and 3rd copy. Filled cells
   are *locked* (two thirds of lists or more), outlined cells are *flex* slots
   that made the cut anyway, dotted cells are copies this list keeps in the
