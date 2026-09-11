@@ -221,6 +221,30 @@ td.price.hi{color:var(--fury)}
 .stat.ok b{color:var(--calm)} .stat.bad{border-color:var(--fury)} .stat.bad b{color:var(--fury)}
 .stat.cost b{font-size:12.5px}
 .stats .hbtns{margin-left:auto}
+.hbtns button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.checklist{margin:12px 20px 4px;border:1px solid var(--accent);background:var(--bg)}
+.clhead{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--line)}
+.clhead h3{margin:0;color:var(--ink)}
+.clhead .prog{font-family:"Roboto Mono",monospace;font-size:12px;color:var(--ink2)} .clhead .prog b{color:var(--ink);font-weight:500}
+.clhead .pbar{width:140px;height:8px;background:var(--bar);border-radius:2px;overflow:hidden;display:inline-block;vertical-align:middle;margin:0 8px}
+.clhead .pbar i{display:block;height:100%;background:var(--calm)}
+.clhead .seg button{font-size:14px;padding:3px 9px}
+.clhead .hbtns{margin-left:auto}
+.clwrap{overflow-x:auto;padding:0 6px 6px}
+table.cl td{white-space:nowrap;padding:4px 6px}
+table.cl th{font-family:"Barlow Condensed",sans-serif;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:6px 6px 4px;border-bottom:1px solid var(--line)}
+table.cl td.chk{width:30px;padding-right:0}
+table.cl input[type=checkbox]{width:16px;height:16px;accent-color:var(--calm);cursor:pointer}
+table.cl td.q{width:26px;font-family:"Roboto Mono",monospace;font-weight:500;font-size:14px;text-align:right;padding-right:10px}
+table.cl td.name{font-weight:600;white-space:normal;min-width:160px}
+table.cl td.name small{font-weight:400;color:var(--ink3);font-size:11px;margin-left:6px}
+table.cl td.pr{font-family:"Roboto Mono",monospace;font-size:12px;color:var(--ink2)}
+table.cl td.pr b{font-weight:500;color:var(--ink)}
+table.cl td.pr a{color:inherit;text-decoration:none;border-bottom:1px dotted var(--line)}
+table.cl td.rar{font-size:12px;color:var(--ink2);width:82px}
+table.cl td.money{font-family:"Roboto Mono",monospace;font-size:12px;text-align:right;width:64px}
+table.cl tr.sethead td{font-family:"Barlow Condensed",sans-serif;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);padding-top:10px;border-top:0}
+table.cl tr.have td{opacity:.45;text-decoration:line-through} table.cl tr.have td.chk{opacity:1;text-decoration:none}
 .bcols td.a.good{color:var(--calm)} .bcols td.a.poor{color:var(--fury)}
 td.ops button,.addrow button,button.reset{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink2);font-family:"Roboto Mono",monospace;font-size:10px;font-weight:500;line-height:1;padding:3px 4px;border-radius:3px;cursor:pointer;margin-left:2px}
 td.ops button:hover,.addrow button:hover,button.reset:hover{border-color:var(--accent);color:var(--accent)}
@@ -274,7 +298,7 @@ button.reset{font-size:11px;padding:3px 7px}
 
   <p class="v-sheet"><b>Reading the sheet.</b> The number is the max copies seen (a 1-of in one list, 0 in another, 2 in a third → shows as <b>2</b>). The bar is how many of that legend's lists ran the card at all. Rows tagged <i>core</i> were in every list. <b>Separate</b> tallies main deck and sideboard on their own; <b>Combined</b> adds each list's main and sideboard copies first, then takes the max, which is the count you need to own to build any one list.</p>
   <p class="v-build"><b>Reading the generic list.</b> Main deck and sideboard are treated as one 50-card pool. Every copy of every card is a slot, scored by the share of lists that ran at least that many copies across main + sideboard (over lists that posted a sideboard). The 50 best slots make the pool, then the 40 that most often sat in the main deck become the main deck and the other 10 the sideboard. The three cells on each row are the pool shares for the 1st, 2nd and 3rd copy: filled = <b>locked</b> (two thirds or more), outlined = <b>flex</b>, dotted = a copy this list keeps in the sideboard. Hover a cell for the main / side split. The last number on each row is the <b>average placing</b> of the lists that ran at least that many copies, green when a point or more better than the sample average and red when a point or more worse; the header carries the mean over every copy you have picked, next to the generic list's figure once you edit.</p>
-  <p class="v-build"><b>Adjusting the list.</b> On any row, <b>−</b> drops a copy, <b>+</b> adds one (up to 3 in total), and <b>▾S</b> / <b>▴M</b> move one between main and sideboard. Anything you drop below the generic count shows under <b>Removed</b> with add-back buttons; <b>Next in line</b> and the add box bring in cards that were never in. Counts turn red when the list is off 40 / 10 / 3. Edits are kept per legend in this browser until you press Reset. <b>Save</b> keeps a named copy under the legend (Load, Link, delete from its chip), <b>Link</b> copies a URL that carries the whole list so it opens on any machine, and <b>Export</b> / <b>Import</b> in the bar move every save between browsers as text.</p>
+  <p class="v-build"><b>Adjusting the list.</b> On any row, <b>−</b> drops a copy, <b>+</b> adds one (up to 3 in total), and <b>▾S</b> / <b>▴M</b> move one between main and sideboard. Anything you drop below the generic count shows under <b>Removed</b> with add-back buttons; <b>Next in line</b> and the add box bring in cards that were never in. Counts turn red when the list is off 40 / 10 / 3. Edits are kept per legend in this browser until you press Reset. <b>Build it</b> opens a checklist of the current list with set, card number, rarity and price per card, sorted by set and number so cards are easy to find in a binder or a store; tick what you own and it tracks what is left to buy. <b>Save</b> keeps a named copy under the legend (Load, Link, delete from its chip), <b>Link</b> copies a URL that carries the whole list so it opens on any machine, and <b>Export</b> / <b>Import</b> in the bar move every save between browsers as text.</p>
   <p class="v-buy"><b>Reading the buy list.</b> Turn legends on and off with the tiles. For each legend that is on, the list uses <b>whatever that legend's list is right now on this page</b>: your edited or loaded copy if you have one, otherwise the generic list under the current event-size and placing filters, plus as many of its next-in-line flex slots as you choose. Legend cards and the 12 runes are included. <b>One at a time</b> needs the most copies any single deck uses; <b>All at once</b> sums every deck. Tick cards as you buy them.</p>
   <p class="v-cards"><b>Reading the cards table.</b> Every card in the game, with the share of sampled lists that ran it anywhere (main, sideboard, battlefields, runes, or as the legend) under the current event-size and placing filters. The share is out of the lists that could play it: lists whose legend has every domain of the card, or every list for colorless cards. Where shows which legends ran it and the share of each legend's lists that did. Filter by rarity, set, type and domain, or search; "Not played" shows what never appeared. Sets and rarities come from each card's base printing on TCGplayer.</p>
   <p><b>Prices</b> are the TCGplayer market price of the cheapest printing of each card (base, alternate art, promo or overnumbered, whichever is lowest); hover a price for the printing and the lowest single listing, click it to open TCGplayer. Prices over $20 are red. The generic-list header totals the whole list including the legend card and 12 runes.</p>
@@ -323,6 +347,10 @@ try{ const b = JSON.parse(localStorage.getItem('flex-buy')||'{}'); for(const k o
 if(!BUY.on.length) BUY.on = Object.keys(EDITS).filter(l=>P.data[l]);
 const saveBuy = () => { try{ localStorage.setItem('flex-buy', JSON.stringify(BUY)); }catch(e){} };
 let BOUGHT = {}; try{ BOUGHT = JSON.parse(localStorage.getItem('flex-buy-done')||'{}') || {}; }catch(e){}
+let BL = {}; try{ BL = JSON.parse(localStorage.getItem('flex-buildit')||'{}') || {}; }catch(e){}   // per legend: {open, sort}
+const saveBL = () => { try{ localStorage.setItem('flex-buildit', JSON.stringify(BL)); }catch(e){} };
+let HAVE = {}; try{ HAVE = JSON.parse(localStorage.getItem('flex-have')||'{}') || {}; }catch(e){}     // per legend: {card:1}
+const saveHave = () => { try{ localStorage.setItem('flex-have', JSON.stringify(HAVE)); }catch(e){} };
 const CARDS = {rar:[], set:[], type:[], dom:[], played:'all', q:'', sort:'rate', dir:-1};
 try{ const c = JSON.parse(localStorage.getItem('flex-cards')||'{}'); for(const k of Object.keys(CARDS)) if(c[k]!==undefined) CARDS[k]=c[k]; }catch(e){}
 const saveCards = () => { try{ localStorage.setItem('flex-cards', JSON.stringify(CARDS)); }catch(e){} };
@@ -549,6 +577,38 @@ function savedChips(leg, cur){
   const fmt = ts => new Date(ts).toLocaleDateString(undefined,{month:'short',day:'numeric'});
   return `<div class="saves"><span class="lab">Saved</span>${list.map((sv,i)=>`<span class="chip save${cur.name===sv.name?' cur':''}"><b>${esc(sv.name)}</b><small>${fmt(sv.ts)}</small><button type="button" data-op="load" data-i="${i}" title="load this deck into the editor">Load</button><button type="button" data-op="link" data-i="${i}" title="copy a link to this deck">Link</button><button type="button" data-op="del" data-i="${i}" title="delete this save">×</button></span>`).join('')}</div>`;
 }
+const SETRANK = {OGN:0, SFD:1, UNL:2, VEN:3};
+const numKey = n => { const m = /^(\d+)/.exec(n||''); return m ? +m[1] : 9999; };
+function checklist(leg, cur, info, runeSplit){
+  const bl = BL[leg] || {}; if(!bl.open) return '';
+  const have = HAVE[leg] || {};
+  const items = [];
+  const add = (c,q,grp) => items.push({c, q, grp, pr: PR[c]||null, price: priceOf(c)||0});
+  add(info.full, 1, 'legend');
+  for(const g of ['champion','unit','spell','gear']) for(const c of Object.keys(cur.main).filter(c=>cur.main[c]>0 && groupOf(c,leg)===g).sort()) add(c, cur.main[c], g);
+  for(const c of Object.keys(cur.side).filter(c=>cur.side[c]>0).sort()) add(c, cur.side[c], 'sideboard');
+  for(const c of Object.keys(cur.bf).filter(c=>cur.bf[c])) add(c, 1, 'battlefield');
+  if(runeSplit) for(const part of runeSplit.split(' / ')){ const [q,...rest]=part.split(' '); add(rest.join(' ')+' Rune', +q, 'rune'); }
+  // one row per card: main + side copies together so you count what you own once
+  const merged = new Map();
+  for(const it of items){ const m = merged.get(it.c); if(m){ m.q += it.q; if(it.grp==='sideboard') m.side = (m.side||0)+it.q; } else merged.set(it.c, {...it, side: it.grp==='sideboard'?it.q:0}); }
+  let rows = [...merged.values()];
+  const bySet = bl.sort !== 'list';
+  if(bySet) rows.sort((a,b)=>{ const sa=a.pr?a.pr.set:'ZZZ', sb=b.pr?b.pr.set:'ZZZ'; return (SETRANK[sa]??8)-(SETRANK[sb]??8) || sa.localeCompare(sb) || numKey(a.pr&&a.pr.num)-numKey(b.pr&&b.pr.num) || a.c.localeCompare(b.c); });
+  const total = rows.reduce((a,r)=>a+r.q,0), owned = rows.reduce((a,r)=>a+(have[r.c]?r.q:0),0);
+  const left = rows.reduce((a,r)=>a+(have[r.c]?0:r.price*r.q),0), cost = rows.reduce((a,r)=>a+r.price*r.q,0);
+  let last=null, body='';
+  for(const r of rows){
+    const set = r.pr ? r.pr.set : '?';
+    if(bySet && set!==last){ body += `<tr class="sethead"><td colspan="7">${esc(P.setNames[set]||set)}</td></tr>`; last=set; }
+    const grp = r.grp==='legend'?'legend':r.grp==='battlefield'?'battlefield':r.grp==='rune'?'rune':r.side&&r.side===r.q?'sideboard':r.side?`${r.q-r.side} main + ${r.side} side`:'';
+    body += `<tr class="${have[r.c]?'have':''}"><td class="chk"><input type="checkbox" data-bl="have" data-c="${esc(r.c)}"${have[r.c]?' checked':''} aria-label="own ${esc(r.c)}"></td><td class="q">${r.q}</td><td class="name">${esc(r.c)}${grp?`<small>${grp}</small>`:''}</td><td class="pr">${r.pr?`<a href="${r.pr.u}" target="_blank" rel="noopener"><b>${esc(r.pr.set)}</b> ${esc(r.pr.num)}</a>`:'–'}</td><td class="rar">${r.pr?esc(r.pr.r):''}</td><td class="money">${r.price?money(r.price):'–'}</td><td class="money">${r.price?money(r.price*r.q):'–'}</td></tr>`;
+  }
+  return `<div class="checklist"><div class="clhead"><h3>Build it</h3><span class="prog"><b>${owned}</b>/${total} cards owned<span class="pbar"><i style="width:${total?pct(owned/total):0}%"></i></span><b>${money(left)}</b> still to buy of ${money(cost)}</span>
+    <span class="seg"><button type="button" data-op="bl-sort" data-v="set" aria-pressed="${bySet}">Set &amp; number</button><button type="button" data-op="bl-sort" data-v="list" aria-pressed="${!bySet}">List order</button></span>
+    <span class="hbtns"><button type="button" class="reset" data-op="bl-clear" title="untick every card">Untick all</button><button type="button" class="reset" data-op="buildit">Close</button></span></div>
+    <div class="clwrap"><table class="cl"><tr><th></th><th>qty</th><th>card</th><th>set · number</th><th>rarity</th><th style="text-align:right">each</th><th style="text-align:right">line</th></tr>${body}</table></div></div>`;
+}
 function buildSection(leg, decks){
   const d = P.data[leg], info = P.legends[leg], n = decks.length;
   const G = computeGeneric(leg, decks), cur = current(leg, G), edited = !!EDITS[leg];
@@ -569,8 +629,9 @@ function buildSection(leg, decks){
   return `<section class="legend v-build" id="${slug(leg)}" data-leg="${esc(leg)}">
     <div class="lhead"><h2>${esc(leg)}</h2><span class="cnt">from ${n} list${n>1?'s':''} (${eventSplit(decks)}) · pool over ${G.poolN} with sideboards${edited?` <i class="tag edit">${cur.name?esc(cur.name):'edited'}</i>`:''}</span></div>
     <div class="stats">${st(nm,40,'main')}${st(ns,10,'side')}${st(nb,3,'battlefields')}${paHtml}
-      <span class="hbtns">${edited?`<button type="button" class="reset" data-op="reset" title="back to the generic list">Reset</button>`:''}<button type="button" data-op="save" title="keep a named copy of this list in this browser">Save</button><button type="button" data-op="share" title="copy a link that carries this whole list">Link</button><button type="button" class="copy" data-text="${esc(text)}">Copy list</button></span></div>
+      <span class="hbtns">${edited?`<button type="button" class="reset" data-op="reset" title="back to the generic list">Reset</button>`:''}<button type="button" data-op="buildit" class="${(BL[leg]||{}).open?'on':''}" title="checklist of every card in this list with set, number, rarity and price">Build it</button><button type="button" data-op="save" title="keep a named copy of this list in this browser">Save</button><button type="button" data-op="share" title="copy a link that carries this whole list">Link</button><button type="button" class="copy" data-text="${esc(text)}">Copy list</button></span></div>
     ${savedChips(leg, cur)}
+    ${checklist(leg, cur, info, top ? top[0] : '')}
     <div class="chips"><span class="chip"><b>${esc(info.full)}</b> legend</span>${doms}${top?`<span class="chip"><b>Runes</b> ${esc(top[0])} <span class="meta">${top[1]}/${n} lists</span></span>`:''}</div>
     ${n<3?`<div class="note" style="margin-top:10px">Only ${n} list${n>1?'s':''} in this sample, so the "generic" list is close to a copy of ${n>1?'them':'it'}.</div>`:''}
     <div class="bcols">
@@ -599,6 +660,9 @@ function applyOp(btn){
   const sec = btn.closest('section.legend'), leg = sec.dataset.leg, op = btn.dataset.op;
   const G = computeGeneric(leg, FD[leg]);
   if(op==='reset'){ delete EDITS[leg]; saveEdits(); rerender(sec, leg); return; }
+  if(op==='buildit'){ BL[leg] = {...(BL[leg]||{}), open: !(BL[leg]||{}).open}; saveBL(); rerender(sec, leg); return; }
+  if(op==='bl-sort'){ BL[leg] = {...(BL[leg]||{}), open:true, sort: btn.dataset.v}; saveBL(); rerender(sec, leg); return; }
+  if(op==='bl-clear'){ delete HAVE[leg]; saveHave(); rerender(sec, leg); return; }
   const cur = clone(current(leg, G));
   const flash = (b, t) => { const old=b.textContent; b.textContent=t; setTimeout(()=>{ b.textContent=old; }, 1400); };
   const copyText = async (t) => { try{ await navigator.clipboard.writeText(t); }catch(e){ const ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');}catch(_){} ta.remove(); } };
@@ -752,7 +816,9 @@ main.addEventListener('click', e=>{
   else if(k==='copy'){ const t=document.getElementById('buytext').value; copyText(t); const old=b.textContent; b.textContent='Copied'; setTimeout(()=>b.textContent=old,1400); return; }
   saveBuy(); const y=window.scrollY; render(); window.scrollTo(0,y);
 });
-main.addEventListener('change', e=>{ const cb=e.target.closest('input[data-buy="done"]'); if(!cb) return; if(cb.checked) BOUGHT[cb.dataset.c]=1; else delete BOUGHT[cb.dataset.c]; saveBought(); const y=window.scrollY; render(); window.scrollTo(0,y); });
+main.addEventListener('change', e=>{
+  const hv=e.target.closest('input[data-bl="have"]'); if(hv){ const sec=hv.closest('section.legend'), leg=sec.dataset.leg; HAVE[leg]=HAVE[leg]||{}; if(hv.checked) HAVE[leg][hv.dataset.c]=1; else delete HAVE[leg][hv.dataset.c]; if(!Object.keys(HAVE[leg]).length) delete HAVE[leg]; saveHave(); const y=window.scrollY; rerender(sec, leg); window.scrollTo(0,y); return; }
+  const cb=e.target.closest('input[data-buy="done"]'); if(!cb) return; if(cb.checked) BOUGHT[cb.dataset.c]=1; else delete BOUGHT[cb.dataset.c]; saveBought(); const y=window.scrollY; render(); window.scrollTo(0,y); });
 async function copyText(t){ try{ await navigator.clipboard.writeText(t); }catch(e){ const ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');}catch(_){} ta.remove(); } }
 
 // ---------- cards: play rate of every card ----------

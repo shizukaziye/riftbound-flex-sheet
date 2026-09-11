@@ -67,6 +67,12 @@ with the flex slots marked, editable, saveable and shareable.
 - **Flex choices** pairs the weakest slots in the list ("cut first") with the
   next cards in line that did not make it ("next in line", 10% or more),
   each with its share and average placing.
+- **Build it** opens a checklist of the current list: quantity, card, the
+  cheapest printing's set and card number, rarity, price and line total, with
+  legend and runes included and a card's main plus sideboard copies on one
+  row. Sorted by set and number for binder hunting, or in list order. Tick
+  what you own; the header tracks cards owned and money still to spend.
+  Ticks are kept per legend in the browser.
 - **Saving.** Save keeps a named copy of the current list under its legend;
   each save is a chip with Load, Link and delete. Link copies a URL with the
   whole list encoded in the hash, so it opens on any machine and can be
@@ -112,7 +118,8 @@ left out) across the sampled lists under the current filters.
   against the lists whose legend has every domain of the card (all lists for
   colorless cards such as battlefields), how many
   legends ran it, average copies when run, share of those runs where it sat
-  in the main deck, and the legends with their list counts.
+  in the main deck, and the legends that ran it with the share of each
+  legend's lists that did.
 - Filter chips for rarity, set, type and domain, a Played / Not played
   switch, and a search box. Headers sort. Filters are remembered in the
   browser.
